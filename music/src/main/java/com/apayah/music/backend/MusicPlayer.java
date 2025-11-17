@@ -4,6 +4,9 @@ import java.util.List;
 
 import javax.sound.sampled.LineUnavailableException;
 
+import com.apayah.music.event.BackendEventQueue;
+import com.apayah.music.event.backend.PlayMusicEvent;
+import com.apayah.music.event.backend.contract.BackendEvent;
 import com.sedmelluq.discord.lavaplayer.format.AudioDataFormat;
 import com.sedmelluq.discord.lavaplayer.format.StandardAudioDataFormats;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
@@ -28,34 +31,24 @@ public class MusicPlayer {
         this.player.addListener(scheduler);
         this.player.setPaused(true);
         this.speaker = new Speaker(player, audioFormat);
-        // new Thread(this::switcher).start();;
+        startMessageLoop();
     }
 
-    // public void switcher() {
-    //     while (true) {
-    //         if(queue.isEmpty() || queue.isOnEnd() || isPlaying() || this.player.isPaused() ) {
-    //             try {
-    //                 Thread.sleep(5);
-    //             } catch (Exception e) {
-    //                 e.printStackTrace();
-    //             }
-    //             continue; 
-    //         }
+      public void startMessageLoop() {
+        new Thread(() -> {
+            while (true) {
+                try {
+                    BackendEvent event = BackendEventQueue.queue.take(); // Waits here for a message
+                    if(event instanceof PlayMusicEvent) {
+                        loadMusic(((PlayMusicEvent)event).getUrl());
+                    }
 
-    //         Music next = queue.next();
-    //         player.playTrack(next.getTrack());
-
-    //         // wait until it really playing
-    //         while (!isPlaying()) {
-    //             try {
-    //                 Thread.sleep(5);
-    //             } catch (InterruptedException e) {
-    //                 e.printStackTrace();
-    //             }
-    //         }
-    //     }
-    // }
-    
+                } catch (InterruptedException e) {
+                    break;
+                }
+            }
+        }).start();
+    }
 
     public void resume() {
         if(this.player.isPaused()) {
@@ -122,8 +115,10 @@ public class MusicPlayer {
         AudioSourceManagers.registerRemoteSources(manager); 
         var player = new MusicPlayer(manager);
         var musicUrl = "https://soundcloud.com/turkeybaconclub/sets/hollow-knight-silksong?utm_source=clipboard&utm_medium=text&utm_campaign=social_sharing";
-        player.loadMusic(musicUrl);
+        // player.loadMusic(musicUrl);
         player.resume();
-        Thread.sleep(99999999);
+        BackendEventQueue.queue.put(new PlayMusicEvent(musicUrl));
+
+        Thread.sleep(99999999);    
     }
 }
