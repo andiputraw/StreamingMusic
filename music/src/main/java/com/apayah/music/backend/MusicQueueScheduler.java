@@ -16,9 +16,9 @@ public class MusicQueueScheduler extends AudioEventAdapter {
     private MusicQueue queue;
     private final Object queueLock = new Object(); // Used for synchronization
 
-    public MusicQueueScheduler(AudioPlayer player) {
+    public MusicQueueScheduler(AudioPlayer player, MusicQueue queue) {
         this.player = player;
-        this.queue = new MusicQueue();
+        this.queue = queue;
     }
 
     /**

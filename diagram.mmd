@@ -1,0 +1,141 @@
+classDiagram
+
+%% ============================
+%% Playlist & PlaylistManager
+%% ============================
+
+class Playlist {
+  +save()
+  +add()
+  +setName()
+  +getName()
+  +remove()
+}
+
+class PlaylistManager {
+  <<singleton>>
+  +getPlaylists()
+  +getPlaylistByName()
+}
+
+PlaylistManager --> Playlist
+
+
+%% ============================
+%% UI Layer
+%% ============================
+
+class UI {
+}
+
+class MainUI {
+}
+
+class ControlUI {
+}
+
+class PlaylistUI {
+}
+
+UI <|-- MainUI
+UI <|-- ControlUI
+UI <|-- PlaylistUI
+
+%% UI association to Facade
+UI --> MusicPlayerFacade
+
+
+%% ============================
+%% Main Entry
+%% ============================
+
+class Main {
+}
+
+Main *-- ControlUI
+
+
+%% ============================
+%% Facade Pattern
+%% ============================
+
+
+class MusicSystemFacade {
+  +play()
+  +pause()
+  +resume()
+  +seek(position)
+  +jumpTo(index)
+  +addToQueue(track)
+  +search(query)
+}
+
+%% Composition (filled diamond)
+MusicPlayerFacade *-- MusicPlayerQueue
+MusicPlayerFacade *-- MusicPlayerScheduler
+MusicPlayerFacade *-- MusicPlayerSpeaker
+
+%% Aggregation (hollow diamond)
+MusicPlayerQueue o-- SearchMusic
+MusicPlayerQueue o-- MusicManager
+MusicPlayerScheduler o-- MusicManager
+
+
+
+%% ============================
+%% Subsystems
+%% ============================
+
+class MusicPlayerCommandQueuer {
+    - syncQueue queue
+}
+
+class MusicPlayerScheduler {
+    - next()
+    - onTrackEnd()
+}
+
+class MusicPlayerSpeaker {
+    - provide()
+}
+
+class MusicManager {
+    - getTrack(String url)
+}
+
+class SearchMusic {
+    - find(String query)
+    - findRandom()
+}
+
+
+%% ============================
+%% Command Pattern
+%% ============================
+
+class Command {
+  <<abstract>>
+}
+
+Command <|-- ResumeMusicCommand
+Command <|-- PauseMusicCommand
+Command <|-- AddMusicCommand
+Command <|-- SeekMusicCommand
+Command <|-- JumpMusicCommand
+
+
+%% Commands call the Facade
+Command --> MusicPlayerFacade
+
+class ResumeMusicCommand {}
+class PauseMusicCommand {
+}
+class AddMusicCommand {
+    + String music_url
+}
+class SeekMusicCommand {
+    + int milis 
+}
+class JumpMusicCommand {
+    + int index
+}
