@@ -24,7 +24,6 @@ public class JavaFXApplication1 extends Application {
         Parent root = FXMLLoader.load(getClass().getResource("/fxml/AppLayout.fxml"));
 
         Scene scene = new Scene(root, 1280, 800);
-        var musicPlayer = new MusicPlayerFacade();
 
         // Load CSS if available
         String cssPath = getClass().getResource("/css/style.css") != null

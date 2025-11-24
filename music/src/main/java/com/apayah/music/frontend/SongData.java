@@ -17,6 +17,7 @@ public class SongData {
     private String album;
     private String duration;
     private Image image;
+    private com.apayah.music.backend.Music music; // Reference to original Music object
 
     // Constructor
     public SongData(int number, String title, String artist, String album, String duration, Image image) {
@@ -26,6 +27,19 @@ public class SongData {
         this.album = album;
         this.duration = duration;
         this.image = image;
+        this.music = null;
+    }
+
+    // Constructor with Music object
+    public SongData(int number, String title, String artist, String album, String duration, Image image,
+            com.apayah.music.backend.Music music) {
+        this.number = number;
+        this.title = title;
+        this.artist = artist;
+        this.album = album;
+        this.duration = duration;
+        this.image = image;
+        this.music = music;
     }
 
     // Getter methods for TableView PropertyValueFactory
@@ -80,5 +94,13 @@ public class SongData {
 
     public void setImage(Image image) {
         this.image = image;
+    }
+
+    public com.apayah.music.backend.Music getMusic() {
+        return music;
+    }
+
+    public void setMusic(com.apayah.music.backend.Music music) {
+        this.music = music;
     }
 }

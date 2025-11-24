@@ -20,7 +20,10 @@ public class MainLayoutController implements Initializable {
 
     @FXML
     private Parent mainContent;
+    
+    @FXML
     private ControlFXMLController musicControlController;
+    
     private static MainLayoutController instance;
 
     /**
@@ -92,6 +95,15 @@ public class MainLayoutController implements Initializable {
     public void setSongDuration(double duration) {
         if (musicControlController != null) {
             musicControlController.setDuration(duration);
+        }
+    }
+
+    /**
+     * Set current time in the control bar
+     */
+    public void setCurrentTime(double time) {
+        if (musicControlController != null) {
+            musicControlController.setCurrentTime(time);
         }
     }
 }
