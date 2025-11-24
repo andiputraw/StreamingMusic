@@ -1,1 +1,11 @@
-music/target/*
+/target/
+*.class
+*.log
+*.jar
+*.war
+*.ear
+*.iml
+.idea/
+*.iws
+*.ipr
+.DS_Store
