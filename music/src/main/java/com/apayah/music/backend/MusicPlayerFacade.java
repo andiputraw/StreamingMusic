@@ -45,42 +45,42 @@ public class MusicPlayerFacade {
         this.commandQueue = new MusicPlayerCommandQueue(musicManager, this.scheduler);
     }
 
-    void play(Music music) {
+    public void play(Music music) {
         //
     }
 
-    void pause() {
+    public void pause() {
         commandQueue.enqueue(new PauseMusicCommand());
     }
 
-    void resume() {
+    public void resume() {
         commandQueue.enqueue(new ResumeMusicCommand());
     }
 
-    void seek(long milis) {
+    public void seek(long milis) {
         commandQueue.enqueue(new SeekMusicCommand(milis));
     }
 
-    void jump(int index) {
+    public void jump(int index) {
         commandQueue.enqueue(new JumpMusicCommand(index));
     }
 
-    void addToQueue(Music music) {
+    public void addToQueue(Music music) {
         commandQueue.enqueue(new AddMusicCommand(music));
     }
 
 
-    void addToQueue(List<Music> musics) {
+    public void addToQueue(List<Music> musics) {
         for (Music music : musics) {
             commandQueue.enqueue(new AddMusicCommand(music));
         }
     }
 
-    CompletableFuture<List<Music>> search(String query) {
+    public CompletableFuture<List<Music>> search(String query) {
         return searcher.searchMusic(query);
     }
 
-    List<Music> playingQueue() {
+    public List<Music> playingQueue() {
         return this.musicQueue.getMusics();
     }
 
