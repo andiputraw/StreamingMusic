@@ -3,6 +3,7 @@ package com.apayah.music.frontend.controllers;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+import com.apayah.music.frontend.AppState;
 import com.apayah.music.frontend.SongData;
 
 import javafx.collections.FXCollections;
@@ -80,6 +81,9 @@ public class PlaylistFXMLController implements Initializable {
     }
 
     private void initializeSongTable() {
+        var musicPlayerFacade = AppState.getInstance().getMusicPlayer();
+
+        musicPlayerFacade
         // Membuat ObservableList dengan data lagu sesuai format baru
         ObservableList<SongData> songs = FXCollections.observableArrayList(
                 new SongData(1, "Mr. Chu", "Apink", "Pink Blossom", "3:35", new Image("file:./image/song1.jpg")),
