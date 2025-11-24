@@ -3,11 +3,11 @@ package com.apayah.music.backend;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 
-import com.apayah.music.command.backend.AddMusicEvent;
-import com.apayah.music.command.backend.JumpMusicEvent;
-import com.apayah.music.command.backend.PauseMusicEvent;
-import com.apayah.music.command.backend.ResumeMusicEvent;
-import com.apayah.music.command.backend.SeekMusicEvent;
+import com.apayah.music.command.backend.AddMusicCommand;
+import com.apayah.music.command.backend.JumpMusicCommand;
+import com.apayah.music.command.backend.PauseMusicCommand;
+import com.apayah.music.command.backend.ResumeMusicCommand;
+import com.apayah.music.command.backend.SeekMusicCommand;
 import com.apayah.music.command.backend.contract.Command;
 
 public class MusicPlayerCommandQueue {
@@ -33,20 +33,20 @@ public class MusicPlayerCommandQueue {
             while (true) {
                 try {
                     Command event = queue.take();
-                    if(event instanceof AddMusicEvent) {
-                        manager.play(((AddMusicEvent)event).getMusic());
+                    if(event instanceof AddMusicCommand) {
+                        manager.play(((AddMusicCommand)event).getMusic());
                     }
-                    if(event instanceof ResumeMusicEvent) {
+                    if(event instanceof ResumeMusicCommand) {
                         manager.resume();
                     }
-                    if(event instanceof PauseMusicEvent) {
+                    if(event instanceof PauseMusicCommand) {
                         manager.pause();
                     }
-                    if(event instanceof JumpMusicEvent) {
-                        musicQueue.jumpQueue(((JumpMusicEvent)event).getIndex());
+                    if(event instanceof JumpMusicCommand) {
+                        musicQueue.jumpQueue(((JumpMusicCommand)event).getIndex());
                     }
-                    if(event instanceof SeekMusicEvent) {
-                        manager.seek(((SeekMusicEvent)event).getMilis());
+                    if(event instanceof SeekMusicCommand) {
+                        manager.seek(((SeekMusicCommand)event).getMilis());
                     }
 
                 } catch (InterruptedException e) {

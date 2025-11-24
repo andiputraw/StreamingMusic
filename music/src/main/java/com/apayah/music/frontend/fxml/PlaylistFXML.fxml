@@ -1,0 +1,270 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.cell.PropertyValueFactory?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="1280.0" prefWidth="1280.0" styleClass="root" stylesheets="@../../../../../../../resources/css/style.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="javafxapplication1.PlaylistFXMLController">
+   <children>
+      <!-- Include Header FXML Here -->
+      <fx:include fx:id="header" source="HeaderFXML.fxml" />
+      
+      <!-- Main Content HBox -->
+      <HBox prefHeight="720.0" prefWidth="1280.0" VBox.vgrow="ALWAYS">
+         <children>
+            <!-- First VBox (with ScrollPane) -->
+            <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="720.0" prefWidth="499.0" styleClass="side_ankerpane" stylesheets="@../../../../../../../resources/css/style.css" translateX="8.0">
+               <children>
+                  <!-- Box persegi panjang pertama -->
+                  <StackPane styleClass="rectangle-box">
+                     <children>
+                        <Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="162.0" prefWidth="494.0" styleClass="playlist-header" stylesheets="@../../../../../../../resources/css/style.css" translateY="6.0">
+                           <children>
+                              <ImageView fitHeight="140.0" fitWidth="148.0" layoutX="14.0" layoutY="11.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                   <Image url="@../../../../../../../resources/image/sSPH844ILIt_large.jpg" />
+                                 </image>
+                              </ImageView>
+                              <Label layoutX="162.0" layoutY="92.0" styleClass="playlist-title" stylesheets="@../../../../../../../resources/css/style.css" text="Judul Playlist">
+                                 <font>
+                                    <Font name="Impact" size="29.0" />
+                                 </font>
+                              </Label>
+                              <Label layoutX="172.0" layoutY="83.0" styleClass="playlist-item-text" text="Your Playlist" />
+                           </children>
+                        </Pane>
+                     </children>
+                  </StackPane>
+            
+                  <!-- Menambahkan HBox untuk membuat tombol bersebelahan -->
+                  <HBox alignment="CENTER_LEFT" spacing="10">
+                     <Button fx:id="playButton" minHeight="39.0" minWidth="41.0" mnemonicParsing="false" prefHeight="37.0" prefWidth="37.0" styleClass="circle-button" stylesheets="@../../../../../../../resources/css/style.css" text="P" translateX="10.0" translateY="15.0">
+                        <font>
+                           <Font size="6.0" />
+                        </font>
+                     </Button>
+                  </HBox>
+            
+                  <Label styleClass="recently-played-label" stylesheets="@../../../../../../../resources/css/style.css">
+                     <VBox.margin>
+                        <Insets top="10.0" />
+                     </VBox.margin>
+                  </Label>
+            
+                  <!-- TableView for displaying songs and images -->
+                  <HBox prefHeight="505.0" prefWidth="530.0">
+                     <children>
+                        <TableView fx:id="songTableView" prefHeight="453.0" prefWidth="493.0" styleClass="column-header" stylesheets="@../../../../../../../resources/css/style.css">
+                           <columns>
+                              <!-- Column for Image -->
+                              <TableColumn prefWidth="50.0" text="Image">
+                                 <cellValueFactory>
+                                    <PropertyValueFactory property="image" />
+                                 </cellValueFactory>
+                              </TableColumn>
+
+                              <!-- Column for Song Title -->
+                              <TableColumn prefWidth="150.0" text="Song Title">
+                                 <cellValueFactory>
+                                    <PropertyValueFactory property="songTitle" />
+                                 </cellValueFactory>
+                              </TableColumn>
+
+                              <!-- Column for Album -->
+                              <TableColumn prefWidth="120.0" text="Album">
+                                 <cellValueFactory>
+                                    <PropertyValueFactory property="album" />
+                                 </cellValueFactory>
+                              </TableColumn>
+                              
+                              <!-- Column for Add Action -->
+                              <TableColumn fx:id="actionColumn" prefWidth="73.0" sortable="false" text="Action" />
+                           </columns>
+                        </TableView>
+                     </children>
+                  </HBox>
+               </children>
+            </VBox>
+
+            <!-- Second VBox (with another set of content) -->
+            <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="720.0" prefWidth="279.0" styleClass="side_ankerpane" stylesheets="@../../../../../../../resources/css/style.css" translateX="15.0">
+               <children>
+                  <!-- Box pertama dalam second VBox -->
+                  <Pane prefHeight="283.0" prefWidth="275.0" styleClass="inner-pane" stylesheets="@../../../../../../../resources/css/style.css" translateY="10.0">
+                     <children>
+                        <Label layoutY="184.0" styleClass="recently-played-label" stylesheets="@../../../../../../../resources/css/style.css" text="Song Name" translateY="33.0">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <Label layoutX="7.0" layoutY="221.0" prefHeight="14.0" prefWidth="93.0" styleClass="categories-label" stylesheets="@../../../../../../../resources/css/style.css" text="Artist name" translateX="5.0" translateY="30.0" />
+                     </children></Pane>
+                  <!-- Box kedua dalam second VBox -->
+                  <Pane prefHeight="432.0" prefWidth="275.0" styleClass="inner-pane" stylesheets="@../../../../../../../resources/css/style.css" translateY="40.0" />
+               </children>
+            </VBox>
+         </children>
+      </HBox>
+      
+      <!-- Music Control Bar at Bottom -->
+      <fx:include fx:id="musicControl" source="ControlFXML.fxml" />
+      
+      <!-- Add to Playlist Modal (Hidden by default) -->
+      <StackPane fx:id="modalOverlay" styleClass="modal-overlay" visible="false">
+         <children>
+            <VBox alignment="CENTER" maxHeight="400.0" maxWidth="350.0" minHeight="400.0" minWidth="350.0" styleClass="modal-content" stylesheets="@../../../../../../../resources/css/style.css">
+               <children>
+                  <!-- Modal Header -->
+                  <HBox alignment="CENTER_LEFT" prefHeight="50.0" prefWidth="350.0" styleClass="modal-header">
+                     <children>
+                        <Label styleClass="modal-title" text="Add to Playlist">
+                           <font>
+                              <Font name="System Bold" size="16.0" />
+                           </font>
+                        </Label>
+                        <Region HBox.hgrow="ALWAYS" />
+                        <Button fx:id="closeModalButton" mnemonicParsing="false" onAction="#hideAddToPlaylistModal" styleClass="close-button" text="✕">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Button>
+                     </children>
+                     <padding>
+                        <Insets bottom="10.0" left="20.0" right="15.0" top="15.0" />
+                     </padding>
+                  </HBox>
+                  
+                  <!-- Playlist Selection Area -->
+                  <ScrollPane fitToWidth="true" prefHeight="250.0" prefWidth="350.0" styleClass="playlist-scroll">
+                     <content>
+                        <VBox fx:id="playlistContainer" spacing="8.0" styleClass="playlist-container">
+                           <children>
+                              <!-- Example Playlist Options -->
+                              <HBox alignment="CENTER_LEFT" spacing="12.0" styleClass="playlist-item">
+                                 <children>
+                                    <ImageView fitHeight="45.0" fitWidth="45.0" pickOnBounds="true" preserveRatio="true" styleClass="playlist-image">
+                                       <image>
+                                          <Image url="@../../../../../../../resources/image/sSPH844ILIt_large.jpg" />
+                                       </image>
+                                    </ImageView>
+                                    <VBox alignment="CENTER_LEFT" spacing="2.0" HBox.hgrow="ALWAYS">
+                                       <children>
+                                          <Label styleClass="playlist-name" text="BL8M">
+                                             <font>
+                                                <Font name="System Bold" size="14.0" />
+                                             </font>
+                                          </Label>
+                                          <Label styleClass="playlist-info" text="5 songs">
+                                             <font>
+                                                <Font size="12.0" />
+                                             </font>
+                                          </Label>
+                                       </children>
+                                    </VBox>
+                                    <RadioButton fx:id="playlist1Radio" mnemonicParsing="false" />
+                                 </children>
+                                 <padding>
+                                    <Insets bottom="8.0" left="15.0" right="15.0" top="8.0" />
+                                 </padding>
+                              </HBox>
+                              
+                              <HBox alignment="CENTER_LEFT" spacing="12.0" styleClass="playlist-item">
+                                 <children>
+                                    <ImageView fitHeight="45.0" fitWidth="45.0" pickOnBounds="true" preserveRatio="true" styleClass="playlist-image">
+                                       <image>
+                                          <Image url="@../../../../../../../resources/image/song2.jpg" />
+                                       </image>
+                                    </ImageView>
+                                    <VBox alignment="CENTER_LEFT" spacing="2.0" HBox.hgrow="ALWAYS">
+                                       <children>
+                                          <Label styleClass="playlist-name" text="My Favorites">
+                                             <font>
+                                                <Font name="System Bold" size="14.0" />
+                                             </font>
+                                          </Label>
+                                          <Label styleClass="playlist-info" text="12 songs">
+                                             <font>
+                                                <Font size="12.0" />
+                                             </font>
+                                          </Label>
+                                       </children>
+                                    </VBox>
+                                    <RadioButton fx:id="playlist2Radio" mnemonicParsing="false" />
+                                 </children>
+                                 <padding>
+                                    <Insets bottom="8.0" left="15.0" right="15.0" top="8.0" />
+                                 </padding>
+                              </HBox>
+                              
+                              <HBox alignment="CENTER_LEFT" spacing="12.0" styleClass="playlist-item">
+                                 <children>
+                                    <ImageView fitHeight="45.0" fitWidth="45.0" pickOnBounds="true" preserveRatio="true" styleClass="playlist-image">
+                                       <image>
+                                          <Image url="@../../../../../../../resources/image/song1.jpg" />
+                                       </image>
+                                    </ImageView>
+                                    <VBox alignment="CENTER_LEFT" spacing="2.0" HBox.hgrow="ALWAYS">
+                                       <children>
+                                          <Label styleClass="playlist-name" text="Chill Vibes">
+                                             <font>
+                                                <Font name="System Bold" size="14.0" />
+                                             </font>
+                                          </Label>
+                                          <Label styleClass="playlist-info" text="8 songs">
+                                             <font>
+                                                <Font size="12.0" />
+                                             </font>
+                                          </Label>
+                                       </children>
+                                    </VBox>
+                                    <RadioButton fx:id="playlist3Radio" mnemonicParsing="false" />
+                                 </children>
+                                 <padding>
+                                    <Insets bottom="8.0" left="15.0" right="15.0" top="8.0" />
+                                 </padding>
+                              </HBox>
+                           </children>
+                           <padding>
+                              <Insets bottom="10.0" top="10.0" />
+                           </padding>
+                        </VBox>
+                     </content>
+                  </ScrollPane>
+                  
+                  <!-- Modal Buttons -->
+                  <HBox alignment="CENTER" prefHeight="60.0" prefWidth="350.0" spacing="15.0">
+                     <children>
+                        <Button fx:id="cancelButton" mnemonicParsing="false" onAction="#hideAddToPlaylistModal" prefHeight="35.0" prefWidth="80.0" styleClass="cancel-button" text="Cancel">
+                           <font>
+                              <Font size="12.0" />
+                           </font>
+                        </Button>
+                        <Button fx:id="addToPlaylistButton" mnemonicParsing="false" onAction="#addToSelectedPlaylist" prefHeight="35.0" prefWidth="80.0" styleClass="confirm-button" text="Add">
+                           <font>
+                              <Font name="System Bold" size="12.0" />
+                           </font>
+                        </Button>
+                     </children>
+                     <padding>
+                        <Insets bottom="15.0" top="15.0" />
+                     </padding>
+                  </HBox>
+               </children>
+            </VBox>
+         </children>
+      </StackPane>
+   </children>
+</VBox>

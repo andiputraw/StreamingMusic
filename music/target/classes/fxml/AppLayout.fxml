@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="1280.0" styleClass="root" stylesheets="@../css/style.css" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.apayah.music.frontend.controllers.AppLayoutController">
+   <children>
+      <!-- Header - Always at top -->
+      <fx:include fx:id="headerSection" source="HeaderFXML.fxml" />
+      
+      <!-- Dynamic Content Area using StackPane -->
+      <StackPane fx:id="contentArea" VBox.vgrow="ALWAYS">
+         <!-- Content will be loaded dynamically here -->
+      </StackPane>
+      
+      <!-- Control Bar - Always at bottom -->
+      <fx:include fx:id="controlSection" source="ControlFXML.fxml" />
+   </children>
+</VBox>

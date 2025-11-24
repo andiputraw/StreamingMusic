@@ -4,11 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
-import com.apayah.music.command.backend.AddMusicEvent;
-import com.apayah.music.command.backend.JumpMusicEvent;
-import com.apayah.music.command.backend.PauseMusicEvent;
-import com.apayah.music.command.backend.ResumeMusicEvent;
-import com.apayah.music.command.backend.SeekMusicEvent;
+import com.apayah.music.command.backend.AddMusicCommand;
+import com.apayah.music.command.backend.JumpMusicCommand;
+import com.apayah.music.command.backend.PauseMusicCommand;
+import com.apayah.music.command.backend.ResumeMusicCommand;
+import com.apayah.music.command.backend.SeekMusicCommand;
 import com.sedmelluq.discord.lavaplayer.format.AudioDataFormat;
 import com.sedmelluq.discord.lavaplayer.format.StandardAudioDataFormats;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
@@ -50,29 +50,29 @@ public class MusicPlayerFacade {
     }
 
     void pause() {
-        commandQueue.enqueue(new PauseMusicEvent());
+        commandQueue.enqueue(new PauseMusicCommand());
     }
 
     void resume() {
-        commandQueue.enqueue(new ResumeMusicEvent());
+        commandQueue.enqueue(new ResumeMusicCommand());
     }
 
     void seek(long milis) {
-        commandQueue.enqueue(new SeekMusicEvent(milis));
+        commandQueue.enqueue(new SeekMusicCommand(milis));
     }
 
     void jump(int index) {
-        commandQueue.enqueue(new JumpMusicEvent(index));
+        commandQueue.enqueue(new JumpMusicCommand(index));
     }
 
     void addToQueue(Music music) {
-        commandQueue.enqueue(new AddMusicEvent(music));
+        commandQueue.enqueue(new AddMusicCommand(music));
     }
 
 
     void addToQueue(List<Music> musics) {
         for (Music music : musics) {
-            commandQueue.enqueue(new AddMusicEvent(music));
+            commandQueue.enqueue(new AddMusicCommand(music));
         }
     }
 
