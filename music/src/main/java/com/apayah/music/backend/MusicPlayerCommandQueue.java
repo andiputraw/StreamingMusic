@@ -13,9 +13,9 @@ import com.apayah.music.command.backend.contract.Command;
 public class MusicPlayerCommandQueue {
     private final BlockingQueue<Command> queue;
     private final MusicManager manager;
-    private final MusicQueue musicQueue;
+    private final MusicQueueScheduler musicQueue;
 
-    public MusicPlayerCommandQueue(MusicManager manager, MusicQueue musicQueue) {
+    public MusicPlayerCommandQueue(MusicManager manager, MusicQueueScheduler musicQueue) {
         this.queue = new ArrayBlockingQueue<Command>(1024);
         this.manager = manager;
         this.musicQueue = musicQueue;
@@ -34,7 +34,7 @@ public class MusicPlayerCommandQueue {
                 try {
                     Command event = queue.take();
                     if(event instanceof AddMusicCommand) {
-                        manager.play(((AddMusicCommand)event).getMusic());
+                        musicQueue.queue(((AddMusicCommand)event).getMusic());
                     }
                     if(event instanceof ResumeMusicCommand) {
                         manager.resume();
@@ -43,7 +43,7 @@ public class MusicPlayerCommandQueue {
                         manager.pause();
                     }
                     if(event instanceof JumpMusicCommand) {
-                        musicQueue.jumpQueue(((JumpMusicCommand)event).getIndex());
+                        musicQueue.jump(((JumpMusicCommand)event).getIndex());
                     }
                     if(event instanceof SeekMusicCommand) {
                         manager.seek(((SeekMusicCommand)event).getMilis());

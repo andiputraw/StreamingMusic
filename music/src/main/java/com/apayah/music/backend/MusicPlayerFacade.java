@@ -42,7 +42,7 @@ public class MusicPlayerFacade {
         this.player.addListener(scheduler);
         this.speaker = new Speaker(player, audioFormat);
         this.searcher = new MusicSearcher(this.manager);
-        this.commandQueue = new MusicPlayerCommandQueue(musicManager, musicQueue);
+        this.commandQueue = new MusicPlayerCommandQueue(musicManager, this.scheduler);
     }
 
     void play(Music music) {
