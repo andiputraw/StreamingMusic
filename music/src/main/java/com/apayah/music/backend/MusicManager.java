@@ -12,7 +12,7 @@ public class MusicManager {
     }
 
     public void play(Music music) {
-        this.player.playTrack(music.getTrack());
+        this.player.playTrack(music.getTrack().makeClone());
     }
 
     public void seek(long milis) {

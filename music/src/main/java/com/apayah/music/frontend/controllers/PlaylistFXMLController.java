@@ -336,7 +336,7 @@ public class PlaylistFXMLController implements Initializable, AppState.MusicUpda
             var info = songData.getMusic().getTrack().getInfo();
 
             // Add song to queue and play immediately
-            musicPlayerFacade.addToQueue(songData.getMusic());
+            musicPlayerFacade.play(songData.getMusic());
             musicPlayerFacade.resume();
             
             // Notify everyone about the change

@@ -63,7 +63,7 @@ public class MusicQueueScheduler extends AudioEventAdapter {
         }
 
         if (nextMusic != null) {
-            player.startTrack(nextMusic.getTrack(), false);
+            player.startTrack(nextMusic.getTrack().makeClone(), false);
         } else {
             // End of queue, player stops.
         }
@@ -85,7 +85,7 @@ public class MusicQueueScheduler extends AudioEventAdapter {
         }
 
         if (musicToPlay != null) {
-            player.startTrack(musicToPlay.getTrack(), false);
+            player.startTrack(musicToPlay.getTrack().makeClone(), false);
             return true;
         }
         return false;
