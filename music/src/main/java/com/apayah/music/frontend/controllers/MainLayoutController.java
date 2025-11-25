@@ -20,10 +20,10 @@ public class MainLayoutController implements Initializable {
 
     @FXML
     private Parent mainContent;
-    
+
     @FXML
     private ControlFXMLController musicControlController;
-    
+
     private static MainLayoutController instance;
 
     /**
@@ -34,6 +34,9 @@ public class MainLayoutController implements Initializable {
         // Controller initialization - FXML includes are handled automatically
         instance = this;
         System.out.println("MainLayoutController initialized successfully");
+
+        // Debug: Print controller references
+        System.out.println("Debug - musicControlController: " + musicControlController);
     }
 
     /**
@@ -77,7 +80,12 @@ public class MainLayoutController implements Initializable {
      * Get reference to music control controller
      */
     public ControlFXMLController getMusicControlController() {
-        return musicControlController;
+        // Try direct field first, then singleton
+        if (musicControlController != null) {
+            return musicControlController;
+        }
+        // Fallback to singleton instance
+        return ControlFXMLController.getInstance();
     }
 
     /**
@@ -104,6 +112,44 @@ public class MainLayoutController implements Initializable {
     public void setCurrentTime(double time) {
         if (musicControlController != null) {
             musicControlController.setCurrentTime(time);
+        }
+    }
+
+    /**
+     * Update all song information including duration and reset progress
+     */
+    public void updateSongInfo(String title, String artist, String albumCoverPath, double durationInSeconds) {
+        if (musicControlController != null) {
+            musicControlController.updateSongInfo(title, artist, albumCoverPath, durationInSeconds);
+        }
+    }
+
+    /**
+     * Update music detail panel
+     */
+    public void updateMusicDetailPanel(String songTitle, String artist, String album, String duration,
+            String imageUrl) {
+        try {
+            var detailController = FXMLDocumentController.getInstance();
+            if (detailController != null) {
+                detailController.updateMusicDetails(songTitle, artist, album, duration, imageUrl);
+            }
+        } catch (Exception e) {
+            System.err.println("Error updating music detail panel: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Update music detail panel with Music object
+     */
+    public void updateMusicDetailPanel(com.apayah.music.backend.Music music) {
+        try {
+            var detailController = FXMLDocumentController.getInstance();
+            if (detailController != null) {
+                detailController.updateMusicDetails(music);
+            }
+        } catch (Exception e) {
+            System.err.println("Error updating music detail panel: " + e.getMessage());
         }
     }
 }

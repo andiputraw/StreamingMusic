@@ -1,13 +1,22 @@
-# Feature: Play Song dari Playlist
+# Feature: Play Song dari Playlist + Detail Panel Update
 
-## Deskripsi
-Fitur baru yang memungkinkan user untuk memutar lagu dengan double-click pada lagu di playlist.
+## Deskripsi  
+Fitur lengkap yang memungkinkan user untuk memutar lagu dengan double-click pada lagu di playlist dan melihat informasi lagu yang sedang diputar di control bar serta detail panel.
+
+## 🎯 **Masalah yang Diperbaiki di PlaylistFXML**
+
+Detail panel di halaman PlaylistFXML tidak menampilkan informasi lagu yang sedang diputar karena:
+
+1. **Controller Reference Issue**: Field FXML tidak terikat dengan benar  
+2. **FXML Package Mismatch**: Controller reference salah package
+3. **Cross-Controller Communication**: Tidak ada komunikasi antar controller instances
 
 ## Fitur yang Ditambahkan
 
-### 1. **Double-Click Play Functionality**
+### 1. **Double-Click Play Functionality (Semua Halaman)**
 - User dapat double-click pada baris lagu di tabel playlist
 - Lagu akan otomatis ditambahkan ke queue dan diputar
+- Bekerja di halaman utama (FXMLDocument) dan halaman playlist (PlaylistFXML)
 - Control bar akan ter-update dengan informasi lagu yang dipilih
 
 ### 2. **Perubahan pada SongData.java**

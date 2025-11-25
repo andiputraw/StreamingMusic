@@ -14,7 +14,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<StackPane id="AnchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="75.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.apayah.music.frontend.controllers.ControlFXMLController">
+<StackPane id="AnchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="90.0" minWidth="-Infinity" prefHeight="90.0" prefWidth="1280.0" styleClass="music-control-bar" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.apayah.music.frontend.controllers.ControlFXMLController">
    <children>
       <!-- Main Music Control Bar -->
       <VBox alignment="CENTER" spacing="3.0" styleClass="music-control-bar">

@@ -8,6 +8,7 @@ import javafx.scene.image.Image;
 public class AppState {
     private static AppState instance = new AppState();
     private MusicPlayerFacade musicPlayer;
+    private Music currentMusic;
 
     public AppState() {
         try {
@@ -29,5 +30,38 @@ public class AppState {
     public static AppState getInstance() {
 
         return instance;
+    }
+    
+    public interface MusicUpdateListener {
+        void onMusicChanged(Music music);
+    }
+    
+    private java.util.List<MusicUpdateListener> listeners = new java.util.ArrayList<>();
+    
+    public void addMusicUpdateListener(MusicUpdateListener listener) {
+        listeners.add(listener);
+    }
+    
+    public void removeMusicUpdateListener(MusicUpdateListener listener) {
+        listeners.remove(listener);
+    }
+    
+    public void notifyMusicChanged(Music music) {
+        this.currentMusic = music;
+        for (MusicUpdateListener listener : listeners) {
+            try {
+                listener.onMusicChanged(music);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public Music getCurrentMusic() {
+        return currentMusic;
+    }
+
+    public void setCurrentMusic(Music currentMusic) {
+        this.currentMusic = currentMusic;
     }
 }

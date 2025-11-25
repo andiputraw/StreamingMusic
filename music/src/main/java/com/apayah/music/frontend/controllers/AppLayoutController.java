@@ -17,11 +17,27 @@ public class AppLayoutController implements Initializable {
     @FXML
     private StackPane contentArea;
 
+    // Reference to music control controller for easy access
+    private ControlFXMLController musicControlController;
+
     private static AppLayoutController instance;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         instance = this;
+
+        // Wait a bit for ControlFXMLController to be initialized
+        javafx.application.Platform.runLater(() -> {
+            musicControlController = ControlFXMLController.getInstance();
+            System.out.println("AppLayoutController: Got music control controller: " + musicControlController);
+
+            // Test music control update
+            if (musicControlController != null) {
+                System.out.println("AppLayoutController: Testing music control update...");
+                musicControlController.updateSongInfo("Test Song", "Test Artist", "", 180.0);
+            }
+        });
+
         // Load default content (main page)
         loadMainContent();
         System.out.println("AppLayoutController initialized successfully");
@@ -73,5 +89,29 @@ public class AppLayoutController implements Initializable {
      */
     public void switchToContent(String fxmlFileName) {
         loadContent("/fxml/" + fxmlFileName);
+    }
+
+    /**
+     * Get music control controller instance
+     */
+    public ControlFXMLController getMusicControlController() {
+        if (musicControlController == null) {
+            musicControlController = ControlFXMLController.getInstance();
+        }
+        return musicControlController;
+    }
+
+    /**
+     * Update music control from anywhere in the app
+     */
+    public void updateMusicControl(String title, String artist, String albumCover, double durationInSeconds) {
+        ControlFXMLController controller = getMusicControlController();
+        if (controller != null) {
+            System.out.println("AppLayoutController: Updating music control - " + title + " by " + artist);
+            controller.updateSongInfo(title, artist, albumCover, durationInSeconds);
+            controller.startPlayback();
+        } else {
+            System.out.println("AppLayoutController: Music control controller not available yet");
+        }
     }
 }

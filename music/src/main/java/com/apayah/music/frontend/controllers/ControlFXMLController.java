@@ -23,13 +23,15 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.util.Duration;
+import com.apayah.music.frontend.AppState;
+import com.apayah.music.backend.Music;
 
 /**
  * FXML Controller class
  *
  * @author PLN
  */
-public class ControlFXMLController implements Initializable {
+public class ControlFXMLController implements Initializable, AppState.MusicUpdateListener {
 
     @FXML
     private ImageView albumCoverImage;
@@ -85,12 +87,26 @@ public class ControlFXMLController implements Initializable {
     private double currentTime = 146.0; // in seconds (2:26)
     private double totalTime = 240.0; // in seconds (4:00)
     private Timeline timeline;
+    private static ControlFXMLController instance;
 
     /**
      * Initializes the controller class.
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+        instance = this;
+        System.out.println("ControlFXMLController initialized successfully");
+        
+        // Register as music update listener
+        AppState.getInstance().addMusicUpdateListener(this);
+        
+        // Check if there is already music playing and update UI
+        Music currentMusic = AppState.getInstance().getCurrentMusic();
+        if (currentMusic != null) {
+            System.out.println("DEBUG ControlFXML: Found current music in AppState, updating UI");
+            onMusicChanged(currentMusic);
+        }
+
         // Initialize progress slider
         progressSlider.setMin(0);
         progressSlider.setMax(totalTime);
@@ -147,6 +163,13 @@ public class ControlFXMLController implements Initializable {
         int minutes = (int) (seconds / 60);
         int secs = (int) (seconds % 60);
         return String.format("%d:%02d", minutes, secs);
+    }
+
+    /**
+     * Format duration from milliseconds to seconds
+     */
+    public static double millisecondsToSeconds(long milliseconds) {
+        return milliseconds / 1000.0;
     }
 
     @FXML
@@ -261,16 +284,58 @@ public class ControlFXMLController implements Initializable {
 
     // Public methods for external control
     public void setSongInfo(String title, String artist, String albumCoverPath) {
-        songTitleLabel.setText(title);
-        artistLabel.setText(artist);
+        System.out.println("DEBUG ControlFXML: setSongInfo START");
+        System.out.println("  Received title: '" + title + "'");
+        System.out.println("  Received artist: '" + artist + "'");
+        System.out.println("  Received albumCoverPath: '" + albumCoverPath + "'");
+        System.out.println("  songTitleLabel: " + songTitleLabel);
+        System.out.println("  artistLabel: " + artistLabel);
+        System.out.println("  albumCoverImage: " + albumCoverImage);
+
+        if (songTitleLabel != null) {
+            String oldText = songTitleLabel.getText();
+            songTitleLabel.setText(title);
+            System.out.println("  songTitleLabel updated: '" + oldText + "' -> '" + songTitleLabel.getText() + "'");
+        } else {
+            System.out.println("  ERROR: songTitleLabel is NULL!");
+        }
+
+        if (artistLabel != null) {
+            String oldText = artistLabel.getText();
+            artistLabel.setText(artist);
+            System.out.println("  artistLabel updated: '" + oldText + "' -> '" + artistLabel.getText() + "'");
+        } else {
+            System.out.println("  ERROR: artistLabel is NULL!");
+        }
+        
+        // Update album cover - handle both file paths and URLs
         if (albumCoverPath != null && !albumCoverPath.isEmpty()) {
             try {
-                Image albumImage = new Image("file:" + albumCoverPath);
-                albumCoverImage.setImage(albumImage);
+                Image albumImage;
+                // Check if it's a URL or file path
+                if (albumCoverPath.startsWith("http://") || albumCoverPath.startsWith("https://")) {
+                    System.out.println("  Loading album cover from URL: " + albumCoverPath);
+                    albumImage = new Image(albumCoverPath, true); // true for background loading
+                } else {
+                    System.out.println("  Loading album cover from file: " + albumCoverPath);
+                    albumImage = new Image("file:" + albumCoverPath);
+                }
+                
+                if (albumCoverImage != null) {
+                    albumCoverImage.setImage(albumImage);
+                    System.out.println("  Album cover updated successfully");
+                } else {
+                    System.out.println("  ERROR: albumCoverImage is NULL!");
+                }
             } catch (Exception e) {
-                System.out.println("Could not load album cover: " + albumCoverPath);
+                System.out.println("  ERROR loading album cover: " + e.getMessage());
+                e.printStackTrace();
             }
+        } else {
+            System.out.println("  No album cover to update (empty path)");
         }
+        
+        System.out.println("DEBUG ControlFXML: setSongInfo END");
     }
 
     public void setDuration(double duration) {
@@ -283,6 +348,87 @@ public class ControlFXMLController implements Initializable {
         this.currentTime = time;
         progressSlider.setValue(currentTime);
         updateTimeLabels();
+    }
+
+    /**
+     * Update all song information at once including duration and reset progress
+     */
+    public void updateSongInfo(String title, String artist, String albumCoverPath, double durationInSeconds) {
+        System.out.println("=========================================");
+        System.out.println("DEBUG ControlFXML: updateSongInfo called");
+        System.out.println("  title: '" + title + "'");
+        System.out.println("  artist: '" + artist + "'");
+        System.out.println("  albumCoverPath: '" + albumCoverPath + "'");
+        System.out.println("  duration: " + durationInSeconds);
+        System.out.println("=========================================");
+        
+        // Update song info (title, artist, album cover)
+        setSongInfo(title, artist, albumCoverPath);
+        
+        // Update duration and reset progress
+        setDuration(durationInSeconds);
+        setCurrentTime(0); // Reset to beginning
+
+        // Stop existing timeline
+        if (timeline != null) {
+            timeline.stop();
+        }
+        
+        // Create new timeline with new duration
+        createTimeline();
+
+        // Force update to playing state
+        isPlaying = true;
+        updatePlayPauseIcon();
+        
+        // Start timeline
+        if (timeline != null) {
+            timeline.play();
+        }
+        
+        System.out.println("DEBUG ControlFXML: updateSongInfo completed - labels should now show: " + title + " - " + artist);
+    }
+
+    /**
+     * Start or resume playback
+     */
+    public void startPlayback() {
+        if (!isPlaying) {
+            isPlaying = true;
+            updatePlayPauseIcon();
+            if (timeline != null) {
+                timeline.play();
+            }
+        }
+    }
+
+    /**
+     * Pause playback
+     */
+    public void pausePlayback() {
+        if (isPlaying) {
+            isPlaying = false;
+            updatePlayPauseIcon();
+            if (timeline != null) {
+                timeline.pause();
+            }
+        }
+    }
+
+    /**
+     * Update play/pause icon based on current state
+     */
+    private void updatePlayPauseIcon() {
+        if (playPauseIcon != null) {
+            try {
+                String iconPath = isPlaying ? "file:/StreamingMusic/music/src/main/resources/image/pause.png"
+                        : "file:/StreamingMusic/music/src/main/resources/image/play.png";
+                Image icon = new Image(iconPath);
+                playPauseIcon.setImage(icon);
+            } catch (Exception e) {
+                System.out.println("Could not load play/pause icon");
+            }
+        }
     }
 
     public boolean isPlaying() {
@@ -390,5 +536,31 @@ public class ControlFXMLController implements Initializable {
     private void showErrorMessage(String message) {
         System.out.println("ERROR: " + message);
         // Here you could show an error dialog or notification
+    }
+
+    /**
+     * Get singleton instance
+     */
+    public static ControlFXMLController getInstance() {
+        return instance;
+    }
+
+    /**
+     * Test method to manually update control bar - for debugging
+     */
+    public void testUpdateControlBar() {
+        System.out.println("Testing manual control bar update...");
+        updateSongInfo("Test Song", "Test Artist", "", 180.0);
+        startPlayback();
+        System.out.println("Manual control bar update completed");
+    }
+
+    @Override
+    public void onMusicChanged(Music music) {
+        if (music == null || music.getTrack() == null) return;
+        var info = music.getTrack().getInfo();
+        javafx.application.Platform.runLater(() -> {
+            updateSongInfo(info.title, info.author, info.artworkUrl, info.length / 1000.0);
+        });
     }
 }

@@ -387,13 +387,13 @@
 
 /* Music Control Bar Styling */
 .music-control-bar {
-    -fx-background-color: #181818;
-    -fx-border-color: #282828;
-    -fx-border-width: 1px 0 0 0;
-    -fx-padding: 4px 12px;
-    -fx-max-height: 70px;
-    -fx-min-height: 70px;
-    -fx-pref-height: 70px;
+    -fx-background-color: #2a2a2a;
+    -fx-border-color: #555555;
+    -fx-border-width: 2px 0 0 0;
+    -fx-padding: 15px 20px;
+    -fx-max-height: 100px;
+    -fx-min-height: 100px;
+    -fx-pref-height: 100px;
 }
 
 /* Song Info Labels */
