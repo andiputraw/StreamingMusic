@@ -102,7 +102,7 @@
                   </TableColumn>
                   
                   <!-- Column for Add Button -->
-                  <TableColumn fx:id="actionColumn" prefWidth="80.0" sortable="false" text="Add" />
+                  <TableColumn fx:id="actionColumn" prefWidth="200.0" sortable="false" text="Add" />
                </columns>
             </TableView>
          </children>

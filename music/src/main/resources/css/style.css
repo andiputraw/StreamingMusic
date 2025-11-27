@@ -276,6 +276,12 @@
     -fx-padding: 10px;
 }
 
+.table-view .scroll-bar:horizontal {
+    -fx-padding: 0;
+    -fx-opacity: 0;
+}
+
+
 /* Styling untuk TableView */
 .table-view {
     -fx-background-color: #121212; /* Background gelap seperti Spotify */
