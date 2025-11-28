@@ -2,6 +2,7 @@ package com.apayah.music.backend;
 
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.player.event.AudioEventAdapter;
+import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackEndReason;
 import java.util.ArrayList;
@@ -29,6 +30,18 @@ public class MusicQueueScheduler extends AudioEventAdapter {
         if (endReason.mayStartNext) {
             nextTrack();
         }
+    }
+
+    @Override
+    public void onTrackException(AudioPlayer player, AudioTrack track, FriendlyException exception) {
+        System.err.println("Track Exception: " + exception.getMessage());
+        exception.printStackTrace();
+    }
+
+    @Override
+    public void onTrackStuck(AudioPlayer player, AudioTrack track, long thresholdMs) {
+        System.err.println("Track Stuck: " + track.getInfo().title);
+        nextTrack();
     }
 
     /**
@@ -63,7 +76,9 @@ public class MusicQueueScheduler extends AudioEventAdapter {
         }
 
         if (nextMusic != null) {
-            player.startTrack(nextMusic.getTrack(), false);
+            // Clone the track to ensure it can be played again if it was played before
+            AudioTrack trackToPlay = nextMusic.getTrack().makeClone();
+            player.startTrack(trackToPlay, false);
         } else {
             // End of queue, player stops.
         }
@@ -85,7 +100,9 @@ public class MusicQueueScheduler extends AudioEventAdapter {
         }
 
         if (musicToPlay != null) {
-            player.startTrack(musicToPlay.getTrack(), false);
+            // Clone the track here as well
+            AudioTrack trackToPlay = musicToPlay.getTrack().makeClone();
+            player.startTrack(trackToPlay, false);
             return true;
         }
         return false;
@@ -125,6 +142,15 @@ public class MusicQueueScheduler extends AudioEventAdapter {
             // The safest way to clear your queue is to just make a new one
             this.queue = new MusicQueue();
             player.stopTrack();
+        }
+    }
+
+    /**
+     * Clears the music queue safely.
+     */
+    public void clear() {
+        synchronized (queueLock) {
+            queue.clearQueue();
         }
     }
 }

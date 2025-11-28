@@ -24,17 +24,24 @@
          </HBox.margin>
       </Button>
 
-      <!-- HBox containing TextField and the ImageView for the search icon -->
+      <!-- HBox containing TextField -->
       <HBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="40.0" prefWidth="400.0" spacing="10" style="-fx-border-radius: 20; -fx-background-radius: 20;" styleClass="search-field" alignment="CENTER">
          <TextField fx:id="searchField" promptText="What do you want to play?" style="-fx-background-color: transparent; -fx-border-color: transparent; -fx-text-fill: white; -fx-prompt-text-fill: #999999; -fx-border-radius: 20; -fx-background-radius: 20; -fx-padding: 8 10 8 20; -fx-pref-width: 350.0;" />
-         <ImageView fitHeight="24.0" fitWidth="24.0">
-            <!-- Set the path to your search icon -->
-            <Image url="@../image/search.png" />
-         </ImageView>
          <HBox.margin>
             <Insets left="20.0" top="12.0" />
          </HBox.margin>
       </HBox>
+
+      <Button fx:id="searchButton" mnemonicParsing="false" onAction="#onSearchButtonClick" prefHeight="45.0" prefWidth="45.0" styleClass="circle-button">
+         <graphic>
+            <ImageView fitHeight="28.0" fitWidth="28.0">
+                <Image url="@../image/search.png" />
+            </ImageView>
+         </graphic>
+         <HBox.margin>
+            <Insets left="10.0" top="10.0" />
+         </HBox.margin>
+      </Button>
 
    </children>
 </HBox>

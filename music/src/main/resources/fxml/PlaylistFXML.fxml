@@ -26,7 +26,7 @@
             <VBox minHeight="-Infinity" minWidth="-Infinity" styleClass="side_ankerpane">
          <children>
             <!-- Playlist Header -->
-            <StackPane styleClass="rectangle-box">
+            <StackPane fx:id="playlistHeader" styleClass="rectangle-box">
                <children>
                   <Pane prefHeight="180.0" prefWidth="900.0" styleClass="inner-pane" stylesheets="@../css/style.css" translateY="6.0">
                      <children>
@@ -55,54 +55,57 @@
                <VBox.margin>
                   <Insets left="35.0" top="20.0" />
                </VBox.margin>
-               <Button fx:id="playButton" minHeight="39.0" minWidth="41.0" mnemonicParsing="false" prefHeight="37.0" prefWidth="37.0" styleClass="circle-button" stylesheets="@../css/style.css" text="P">
-                  <font>
-                     <Font size="12.0" />
-                  </font>
-               </Button>
-               <Button fx:id="addSongButton" minHeight="39.0" minWidth="60.0" mnemonicParsing="false" prefHeight="37.0" prefWidth="80.0" styleClass="circle-dark-button" stylesheets="@../css/style.css" text="+ Add">
-                  <font>
-                     <Font size="10.0" />
-                  </font>
+               <Button fx:id="playButton" minHeight="39.0" minWidth="41.0" mnemonicParsing="false" prefHeight="37.0" prefWidth="37.0" styleClass="circle-button" stylesheets="@../css/style.css">
+                   <graphic>
+                     <ImageView fitHeight="23.0" fitWidth="23.0" pickOnBounds="true" preserveRatio="true">
+                        <Image url="@../image/playlist.png" />
+                     </ImageView>
+                  </graphic>
+                  <HBox.margin>
+                     <Insets top="10.0" />
+                  </HBox.margin>
                </Button>
             </HBox>
       
             <!-- Song List Table -->
-            <TableView fx:id="songTableView" prefHeight="400.0" styleClass="column-header" stylesheets="@../css/style.css" VBox.vgrow="ALWAYS">
+            <TableView fx:id="songTableView" prefHeight="400.0" prefWidth="800.0" styleClass="column-header" stylesheets="@../css/style.css" VBox.vgrow="ALWAYS">
                <VBox.margin>
                   <Insets bottom="20.0" left="35.0" right="35.0" top="20.0" />
                </VBox.margin>
+               <columnResizePolicy>
+                  <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+               </columnResizePolicy>
                <columns>
                   <!-- Column for Number -->
-                  <TableColumn prefWidth="50.0" text="#">
+                  <TableColumn prefWidth="40.0" text="#">
                      <cellValueFactory>
                         <PropertyValueFactory property="number" />
                      </cellValueFactory>
                   </TableColumn>
 
                   <!-- Column for Title with Image and Text -->
-                  <TableColumn prefWidth="450.0" text="Title">
+                  <TableColumn prefWidth="650.0" text="Title">
                      <cellValueFactory>
                         <PropertyValueFactory property="title" />
                      </cellValueFactory>
                   </TableColumn>
 
                   <!-- Column for Album -->
-                  <TableColumn prefWidth="300.0" text="Album">
+                  <TableColumn prefWidth="200.0" text="Album">
                      <cellValueFactory>
                         <PropertyValueFactory property="album" />
                      </cellValueFactory>
                   </TableColumn>
                   
                   <!-- Column for Duration -->
-                  <TableColumn prefWidth="100.0" text="⏱">
+                  <TableColumn prefWidth="80.0" text="⏱">
                      <cellValueFactory>
                         <PropertyValueFactory property="duration" />
                      </cellValueFactory>
                   </TableColumn>
                   
                   <!-- Column for Add Button -->
-                  <TableColumn fx:id="actionColumn" prefWidth="80.0" sortable="false" text="Add" />
+                  <TableColumn fx:id="actionColumn" prefWidth="60.0" sortable="false" text="Add" />
                </columns>
             </TableView>
          </children>
@@ -111,14 +114,14 @@
       </ScrollPane>
 
       <!-- Second VBox - Music Detail Panel (1/3 screen) -->
-      <ScrollPane fitToWidth="true" prefHeight="660.0" prefWidth="450.0" styleClass="scroll-pane" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED" HBox.hgrow="NEVER">
+      <ScrollPane fitToWidth="true" prefHeight="660.0" prefWidth="350.0" styleClass="scroll-pane" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED" HBox.hgrow="NEVER">
          <content>
             <VBox minHeight="-Infinity" minWidth="-Infinity" styleClass="side_ankerpane" spacing="10.0">
                <children>
                   <!-- Album Art / Cover -->
-                  <Pane prefHeight="300.0" prefWidth="450.0" styleClass="played-pane" stylesheets="@../css/style.css">
+                  <Pane prefHeight="300.0" prefWidth="350.0" styleClass="played-pane" stylesheets="@../css/style.css">
                      <children>
-                        <ImageView fx:id="playlistDetailAlbumCover" fitHeight="300.0" fitWidth="450.0" pickOnBounds="true" preserveRatio="true">
+                        <ImageView fx:id="playlistDetailAlbumCover" fitHeight="300.0" fitWidth="350.0" pickOnBounds="true" preserveRatio="true">
                            <image>
                               <Image url="@../image/song1.jpg" />
                            </image>
@@ -142,14 +145,12 @@
                         <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                      </padding>
                   </VBox>
-                  
-                  <!-- Playlist Info -->
-                  <Pane prefHeight="300.0" styleClass="played-pane" stylesheets="@../css/style.css">
-                     <children>
-                        <Label layoutX="10.0" layoutY="10.0" styleClass="recently-played-label" text="Playlist Info" />
-                        <Label layoutX="10.0" layoutY="35.0" prefHeight="250.0" styleClass="categories-label" text="This playlist contains your favorite songs...\nTotal tracks: 15\nTotal duration: 45:32\nCreated: Today\nLast updated: Now" wrapText="true" />
-                     </children>
-                  </Pane>
+                 
+                 <!-- Lyrics / Extra Info -->
+                          <Pane prefHeight="50.0" prefWidth="50.0" styleClass="box-pane" stylesheets="@../css/style.css">
+                             <children>
+                             </children>
+                          </Pane>
                </children>
                <padding>
                   <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />

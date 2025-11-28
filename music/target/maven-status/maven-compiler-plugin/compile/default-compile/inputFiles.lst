@@ -26,5 +26,6 @@ C:\TUGAS KULIAH\PBO\TubesGUI_StreamingMusic\StreamingMusic\music\src\main\java\c
 C:\TUGAS KULIAH\PBO\TubesGUI_StreamingMusic\StreamingMusic\music\src\main\java\com\apayah\music\frontend\SongData.java
 C:\TUGAS KULIAH\PBO\TubesGUI_StreamingMusic\StreamingMusic\music\src\main\java\com\apayah\music\frontend\controllers\FXMLDocumentController.java
 C:\TUGAS KULIAH\PBO\TubesGUI_StreamingMusic\StreamingMusic\music\src\main\java\com\apayah\music\command\backend\ItemLoadedCommand.java
+C:\TUGAS KULIAH\PBO\TubesGUI_StreamingMusic\StreamingMusic\music\src\main\java\com\apayah\music\command\backend\ClearQueueCommand.java
 C:\TUGAS KULIAH\PBO\TubesGUI_StreamingMusic\StreamingMusic\music\src\main\java\com\apayah\music\backend\Music.java
 C:\TUGAS KULIAH\PBO\TubesGUI_StreamingMusic\StreamingMusic\music\src\main\java\com\apayah\music\command\backend\JumpMusicCommand.java

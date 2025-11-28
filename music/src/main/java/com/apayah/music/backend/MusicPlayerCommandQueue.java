@@ -4,6 +4,7 @@ import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 
 import com.apayah.music.command.backend.AddMusicCommand;
+import com.apayah.music.command.backend.ClearQueueCommand;
 import com.apayah.music.command.backend.JumpMusicCommand;
 import com.apayah.music.command.backend.PauseMusicCommand;
 import com.apayah.music.command.backend.ResumeMusicCommand;
@@ -47,6 +48,9 @@ public class MusicPlayerCommandQueue {
                     }
                     if(event instanceof SeekMusicCommand) {
                         manager.seek(((SeekMusicCommand)event).getMilis());
+                    }
+                    if(event instanceof ClearQueueCommand) {
+                        musicQueue.clear();
                     }
 
                 } catch (InterruptedException e) {

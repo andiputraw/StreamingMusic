@@ -57,4 +57,8 @@ public class MusicQueue {
         return this.pos >= this.musics.size(); 
     }
     
+    public void clearQueue() {
+        this.musics.clear();
+        this.pos = 0;
+    }
 }

@@ -17,6 +17,9 @@ public class HeaderFXMLController implements Initializable {
     @FXML
     private TextField searchField; // This links to the TextField in the FXML file
 
+    @FXML
+    private Button searchButton;
+
     /**
      * Initializes the controller class.
      */
@@ -62,6 +65,21 @@ public class HeaderFXMLController implements Initializable {
             String searchText = searchField.getText();
             System.out.println("Search for: " + searchText);
             // TODO: Implement search functionality
+        }
+    }
+
+    @FXML
+    private void onSearchButtonClick(ActionEvent event) {
+        String query = searchField.getText();
+        System.out.println("Search button clicked, query: " + query);
+        
+        if (query != null && !query.trim().isEmpty()) {
+            AppLayoutController appController = AppLayoutController.getInstance();
+            if (appController != null) {
+                appController.loadSearchContent(query);
+            } else {
+                System.err.println("AppLayoutController instance not found");
+            }
         }
     }
 }

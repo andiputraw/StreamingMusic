@@ -26,11 +26,16 @@ public class Speaker {
 
         DataLine.Info info = new DataLine.Info(SourceDataLine.class, javaFormat);
         this.line = (SourceDataLine) AudioSystem.getLine(info);
-        this.line.open(javaFormat);
+        
+        // Open with a larger buffer (e.g. 1 second worth of audio) to prevent underflow
+        int bufferSize = format.sampleRate * format.channelCount * 2; 
+        this.line.open(javaFormat, bufferSize);
         this.line.start();
         
         // Start a thread to constantly pump audio to speakers
-        new Thread(this::pumpAudio).start();
+        Thread t = new Thread(this::pumpAudio);
+        t.setDaemon(true);
+        t.start();
     }
 
     private void pumpAudio() {
@@ -49,6 +54,7 @@ public class Speaker {
             }
         } catch (Exception e) {
             e.printStackTrace();
+            System.err.println("Speaker thread died: " + e.getMessage());
         }
     }
 }

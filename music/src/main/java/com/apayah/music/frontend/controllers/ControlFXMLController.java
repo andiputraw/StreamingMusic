@@ -200,28 +200,23 @@ public class ControlFXMLController implements Initializable, AppState.MusicUpdat
     @FXML
     private void onPlayPauseAction(ActionEvent event) {
         isPlaying = !isPlaying;
+        var musicPlayer = AppState.getInstance().getMusicPlayer();
 
         if (isPlaying) {
-            // Change to pause icon
-            try {
-                Image pauseImage = new Image(
-                        "file:/C:/Users/PLN/OneDrive/Dokumen/NetBeansProjects/JavaFXApplication1/image/pause.png");
-                playPauseIcon.setImage(pauseImage);
-            } catch (Exception e) {
-                System.out.println("Could not load pause icon");
+            if (musicPlayer != null) {
+                musicPlayer.resume();
             }
-            timeline.play();
+            // Change to pause icon
+            updatePlayPauseIcon();
+            if (timeline != null) timeline.play();
             System.out.println("Playing");
         } else {
-            // Change to play icon
-            try {
-                Image playImage = new Image(
-                        "file:/C:/Users/PLN/OneDrive/Dokumen/NetBeansProjects/JavaFXApplication1/image/play.png");
-                playPauseIcon.setImage(playImage);
-            } catch (Exception e) {
-                System.out.println("Could not load play icon");
+            if (musicPlayer != null) {
+                musicPlayer.pause();
             }
-            timeline.pause();
+            // Change to play icon
+            updatePlayPauseIcon();
+            if (timeline != null) timeline.pause();
             System.out.println("Paused");
         }
     }
@@ -421,12 +416,16 @@ public class ControlFXMLController implements Initializable, AppState.MusicUpdat
     private void updatePlayPauseIcon() {
         if (playPauseIcon != null) {
             try {
-                String iconPath = isPlaying ? "file:/StreamingMusic/music/src/main/resources/image/pause.png"
-                        : "file:/StreamingMusic/music/src/main/resources/image/play.png";
-                Image icon = new Image(iconPath);
-                playPauseIcon.setImage(icon);
+                String iconName = isPlaying ? "/image/pause.png" : "/image/play.png";
+                URL iconUrl = getClass().getResource(iconName);
+                if (iconUrl != null) {
+                    Image icon = new Image(iconUrl.toExternalForm());
+                    playPauseIcon.setImage(icon);
+                } else {
+                    System.out.println("Could not find icon: " + iconName);
+                }
             } catch (Exception e) {
-                System.out.println("Could not load play/pause icon");
+                System.out.println("Could not load play/pause icon: " + e.getMessage());
             }
         }
     }

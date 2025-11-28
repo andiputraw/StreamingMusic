@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 import com.apayah.music.command.backend.AddMusicCommand;
+import com.apayah.music.command.backend.ClearQueueCommand;
 import com.apayah.music.command.backend.JumpMusicCommand;
 import com.apayah.music.command.backend.PauseMusicCommand;
 import com.apayah.music.command.backend.ResumeMusicCommand;
@@ -35,6 +36,7 @@ public class MusicPlayerFacade {
         this.musicQueue = new MusicQueue();
         
         this.player = manager.createPlayer();
+        this.player.setVolume(100); // Ensure volume is up
         this.player.setPaused(true);
 
         this.musicManager = new MusicManager(player);
@@ -82,6 +84,10 @@ public class MusicPlayerFacade {
 
     public List<Music> playingQueue() {
         return this.musicQueue.getMusics();
+    }
+
+    public void clearQueue() {
+        commandQueue.enqueue(new ClearQueueCommand());
     }
 
     public static void main(String[] args) throws Exception {

@@ -89,6 +89,16 @@
     -fx-pref-width: 300px;
 }
 
+.box-pane {
+    -fx-background-color: #121212;
+    -fx-border-color: #121212;
+    -fx-border-width: 2px 2px 2px 2px;
+    -fx-border-style: solid;
+    -fx-border-radius: 5px;
+    -fx-background-radius: 5px;
+    -fx-pref-width: 300px;
+}
+
 /* Styling untuk Button Bulat */
 .circle-dark-button {
     -fx-background-color: #535353; /* Warna hijau seperti Spotify */

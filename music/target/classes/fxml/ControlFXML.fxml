@@ -68,7 +68,7 @@
                      <graphic>
                         <ImageView fx:id="playPauseIcon" fitHeight="22.0" fitWidth="22.0">
                            <image>
-                              <Image url="@../image/play.png" />
+                              <Image url="@../image/pause.png" />
                            </image>
                         </ImageView>
                      </graphic>

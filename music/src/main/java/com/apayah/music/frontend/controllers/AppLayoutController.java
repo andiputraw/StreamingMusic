@@ -65,6 +65,31 @@ public class AppLayoutController implements Initializable {
     }
 
     /**
+     * Load playlist content with search query
+     */
+    public void loadSearchContent(String query) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/PlaylistFXML.fxml"));
+            Node content = loader.load();
+            
+            PlaylistFXMLController controller = loader.getController();
+            if (controller != null) {
+                controller.performSearch(query);
+            }
+
+            // Clear current content and add new content
+            contentArea.getChildren().clear();
+            contentArea.getChildren().add(content);
+
+            System.out.println("Successfully loaded search results in PlaylistFXML");
+
+        } catch (IOException e) {
+            System.err.println("Error loading search content: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    /**
      * Generic method to load any FXML content
      */
     private void loadContent(String fxmlPath) {
