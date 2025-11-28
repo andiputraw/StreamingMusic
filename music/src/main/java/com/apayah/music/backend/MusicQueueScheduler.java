@@ -57,7 +57,7 @@ public class MusicQueueScheduler extends AudioEventAdapter {
                 playNow = true;
             }
         }
-        
+
         if (playNow) {
             nextTrack(); // Start the first track
         }
@@ -77,8 +77,9 @@ public class MusicQueueScheduler extends AudioEventAdapter {
 
         if (nextMusic != null) {
             // Clone the track to ensure it can be played again if it was played before
-            AudioTrack trackToPlay = nextMusic.getTrack().makeClone();
-            player.startTrack(trackToPlay, false);
+            // AudioTrack trackToPlay = nextMusic.getTrack().makeClone();
+            // player.startTrack(trackToPlay, false);
+            player.startTrack(nextMusic.getTrack().makeClone(), false);
         } else {
             // End of queue, player stops.
         }
@@ -86,6 +87,7 @@ public class MusicQueueScheduler extends AudioEventAdapter {
 
     /**
      * Jumps to a specific track in the queue.
+     * 
      * @param index The 0-based index (e.g., 0 for the first song).
      */
     public boolean jump(int index) {
@@ -100,9 +102,7 @@ public class MusicQueueScheduler extends AudioEventAdapter {
         }
 
         if (musicToPlay != null) {
-            // Clone the track here as well
-            AudioTrack trackToPlay = musicToPlay.getTrack().makeClone();
-            player.startTrack(trackToPlay, false);
+            player.startTrack(musicToPlay.getTrack().makeClone(), false);
             return true;
         }
         return false;

@@ -1,6 +1,9 @@
 package com.apayah.music.frontend.controllers;
 
+import java.io.IOException;
 import java.net.URL;
+import java.util.List;
+import java.util.Optional;
 import java.util.ResourceBundle;
 
 import com.apayah.music.backend.Music;
@@ -11,8 +14,13 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.geometry.Insets;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.ChoiceDialog;
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TableColumn;
@@ -23,6 +31,8 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 import javafx.util.Callback;
 
 public class PlaylistFXMLController implements Initializable, AppState.MusicUpdateListener {
@@ -86,10 +96,10 @@ public class PlaylistFXMLController implements Initializable, AppState.MusicUpda
     public void initialize(URL url, ResourceBundle rb) {
         instance = this;
         System.out.println("PlaylistFXMLController initialized successfully");
-        
+
         // Register as music update listener
         AppState.getInstance().addMusicUpdateListener(this);
-        
+
         // Check if there is already music playing and update UI
         Music currentMusic = AppState.getInstance().getCurrentMusic();
         if (currentMusic != null) {
@@ -108,7 +118,7 @@ public class PlaylistFXMLController implements Initializable, AppState.MusicUpda
 
         // Initialize song table
         // initializeSongTable();
-        
+
         // Setup row factory for double-click playback
         if (songTableView != null) {
             songTableView.setRowFactory(tv -> {
@@ -156,7 +166,7 @@ public class PlaylistFXMLController implements Initializable, AppState.MusicUpda
 
             for (Music music : musics) {
                 var info = music.getTrack().getInfo();
-                songs.add(new SongData(0, info.title, info.author, "", String.valueOf(info.length),
+                songs.add(new SongData(0, info.title, info.author, "", formatDurationFromMillis(info.length),
                         new Image(info.artworkUrl), music));
             }
 
@@ -225,17 +235,49 @@ public class PlaylistFXMLController implements Initializable, AppState.MusicUpda
      */
     @FXML
     private void showAddToPlaylistModal(ActionEvent event) {
-        if (modalOverlay != null) {
-            modalOverlay.setVisible(true);
-            modalOverlay.setManaged(true);
-            modalOverlay.toFront();
+        // if (modalOverlay != null) {
+        // modalOverlay.setVisible(true);
+        // modalOverlay.setManaged(true);
+        // modalOverlay.toFront();
 
-            // Clear any previous selection
-            if (playlistToggleGroup != null) {
-                playlistToggleGroup.selectToggle(null);
-            }
+        // // Clear any previous selection
+        // if (playlistToggleGroup != null) {
+        // playlistToggleGroup.selectToggle(null);
+        // }
+        // }
+        try {
+
+            openPlaylistModal();
+        } catch (Exception e) {
+            // TODO: handle exception
+            e.printStackTrace();
         }
-        System.out.println("Add to Playlist modal opened");
+    }
+
+    @FXML
+    private void openPlaylistModal() throws IOException {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/PlaylistModal.fxml"));
+        Parent root = loader.load();
+
+        PlaylistModalController controller = loader.getController();
+
+        Stage modal = new Stage();
+        modal.initModality(Modality.APPLICATION_MODAL);
+        modal.setTitle("Choose Playlist");
+
+        modal.setScene(new Scene(root));
+        controller.setStage(modal);
+
+        // Example playlists:
+        controller.setPlaylists(List.of("Rock", "Jazz", "Chill", "EDM"));
+
+        modal.showAndWait();
+
+        List<String> selected = controller.getSelectedPlaylists();
+        if (!selected.isEmpty()) {
+            System.out.println("User chose: " + selected);
+        }
+
     }
 
     /**
@@ -352,17 +394,17 @@ public class PlaylistFXMLController implements Initializable, AppState.MusicUpda
         try {
             // Get music player facade
             var musicPlayerFacade = AppState.getInstance().getMusicPlayer();
-            
+
             // Check if we are in search mode (playlist header is hidden)
             boolean isSearchMode = (playlistHeader != null && !playlistHeader.isVisible());
-            
+
             if (isSearchMode) {
                 // In search mode, we want to replace the current queue with the search results
                 // so the user can play through the search results like a playlist
-                
+
                 // 1. Clear current queue
                 musicPlayerFacade.clearQueue();
-                
+
                 // 2. Add all songs from the table to the queue
                 ObservableList<SongData> allSongs = songTableView.getItems();
                 for (SongData song : allSongs) {
@@ -370,30 +412,30 @@ public class PlaylistFXMLController implements Initializable, AppState.MusicUpda
                         musicPlayerFacade.addToQueue(song.getMusic());
                     }
                 }
-                
+
                 // 3. Jump to the selected song (using its index in the table)
                 // Note: Table index is 0-based, jump expects 0-based index
                 int indexToJump = songTableView.getItems().indexOf(songData);
                 musicPlayerFacade.jump(indexToJump);
-                
+
             } else {
                 // Normal playlist behavior (existing logic)
                 // Just add to end and play? Or jump if already in queue?
                 // For now, let's keep the existing logic of adding to end and jumping
-                
+
                 // Calculate index for the new song (current size of queue)
                 int indexToJump = musicPlayerFacade.playingQueue().size();
 
                 // Add song to queue
                 musicPlayerFacade.addToQueue(songData.getMusic());
-                
+
                 // Jump to the new song
                 musicPlayerFacade.jump(indexToJump);
             }
-            
+
             // Resume playback
             musicPlayerFacade.resume();
-            
+
             // Notify everyone about the change
             AppState.getInstance().notifyMusicChanged(songData.getMusic());
 
@@ -404,9 +446,9 @@ public class PlaylistFXMLController implements Initializable, AppState.MusicUpda
 
             // Update UI immediately
             updatePlaylistDetailPanel(songData.getMusic());
-            
+
             System.out.println("Playing song: " + songData.getSongTitle());
-            
+
         } catch (Exception e) {
             System.err.println("Error playing song: " + e.getMessage());
             e.printStackTrace();
@@ -611,10 +653,11 @@ public class PlaylistFXMLController implements Initializable, AppState.MusicUpda
                     } else {
                         System.out.println("ERROR Playlist: Could not find playlistDetailDuration via lookup");
                     }
-                    
+
                     if (albumCoverView != null) {
-                         // We can't easily set the image here without the URL, but at least we checked it exists
-                         System.out.println("DEBUG Playlist: Found albumCoverView via lookup");
+                        // We can't easily set the image here without the URL, but at least we checked
+                        // it exists
+                        System.out.println("DEBUG Playlist: Found albumCoverView via lookup");
                     }
 
                 } else {
@@ -644,23 +687,22 @@ public class PlaylistFXMLController implements Initializable, AppState.MusicUpda
             playlistHeader.setVisible(false);
             playlistHeader.setManaged(false);
         }
-        
+
         System.out.println("Performing search for: " + query);
-        
+
         AppState.getInstance().getMusicPlayer().search(query).thenAccept(musics -> {
             javafx.application.Platform.runLater(() -> {
                 ObservableList<SongData> searchResults = FXCollections.observableArrayList();
                 int index = 1;
                 for (Music music : musics) {
                     searchResults.add(new SongData(
-                        index++,
-                        music.getTrack().getInfo().title,
-                        music.getTrack().getInfo().author,
-                        "-", // Album
-                        formatDurationFromMillis(music.getTrack().getDuration()),
-                        null, // Image
-                        music
-                    ));
+                            index++,
+                            music.getTrack().getInfo().title,
+                            music.getTrack().getInfo().author,
+                            "-", // Album
+                            formatDurationFromMillis(music.getTrack().getDuration()),
+                            null, // Image
+                            music));
                 }
                 songTableView.setItems(searchResults);
             });

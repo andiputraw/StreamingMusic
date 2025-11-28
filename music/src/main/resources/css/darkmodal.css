@@ -1,0 +1,64 @@
+/* DIMMED BACKGROUND */
+.modal-backdrop {
+    -fx-background-color: rgba(0, 0, 0, 0.75);
+}
+
+/* MAIN MODAL PANEL */
+.modal-panel {
+    -fx-background-color: #121212;
+    -fx-background-radius: 14;
+    -fx-padding: 28 26 28 26;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.6), 25, 0.2, 0, 6);
+}
+
+/* TITLE */
+.modal-title {
+    -fx-text-fill: white;
+    -fx-font-size: 19px;
+    -fx-font-weight: bold;
+}
+
+/* SCROLL AREA */
+.modal-scroll {
+    -fx-background-color: transparent;
+}
+.modal-scroll .viewport {
+    -fx-background-color: transparent;
+}
+
+/* PLAYLIST ITEMS */
+.modal-list .check-box .text {
+    -fx-fill: #e6e6e6;
+}
+
+.check-box {
+    -fx-font-size: 15px;
+}
+
+.check-box:hover .text {
+    -fx-fill: white;
+}
+
+/* BUTTONS */
+.modal-btn-cancel {
+    -fx-background-color: #333;
+    -fx-text-fill: white;
+    -fx-padding: 8 22 8 22;
+    -fx-background-radius: 22px;
+}
+
+.modal-btn-cancel:hover {
+    -fx-background-color: #444;
+}
+
+.modal-btn-confirm {
+    -fx-background-color: #1DB954; /* Spotify green */
+    -fx-text-fill: black;
+    -fx-font-weight: bold;
+    -fx-padding: 8 22 8 22;
+    -fx-background-radius: 22px;
+}
+
+.modal-btn-confirm:hover {
+    -fx-background-color: #1ed760;
+}

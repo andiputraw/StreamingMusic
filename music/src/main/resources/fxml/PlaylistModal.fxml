@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.*?>
+
+<StackPane xmlns="http://javafx.com/javafx"
+           xmlns:fx="http://javafx.com/fxml"
+           fx:controller="com.apayah.music.frontend.controllers.PlaylistModalController"
+        stylesheets="@/css/darkmodal.css"
+           styleClass="modal-backdrop">
+
+    <!-- Centered Modal -->
+    <VBox alignment="CENTER" spacing="25"
+          maxWidth="380"
+          styleClass="modal-panel">
+
+        <ScrollPane fitToWidth="true"
+                    styleClass="modal-scroll">
+            <VBox fx:id="radioContainer" spacing="14"
+                  styleClass="modal-list"/>
+        </ScrollPane>
+
+        <HBox spacing="16" alignment="CENTER">
+            <Button text="Cancel" onAction="#onCancel"
+                    styleClass="modal-btn-cancel"/>
+            <Button text="Add" onAction="#onOk"
+                    styleClass="modal-btn-confirm"/>
+        </HBox>
+
+    </VBox>
+
+</StackPane>

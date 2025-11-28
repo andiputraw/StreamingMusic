@@ -29,8 +29,10 @@ public class JavaFXApplication1 extends Application {
         String cssPath = getClass().getResource("/css/style.css") != null
                 ? getClass().getResource("/css/style.css").toExternalForm()
                 : null;
+        String modalCss = getClass().getResource("/css/darkmodal.css").toExternalForm();
         if (cssPath != null) {
             scene.getStylesheets().add(cssPath);
+            scene.getStylesheets().add(modalCss);
         }
 
         stage.setTitle("Music Player Application - Fullscreen");

@@ -48,7 +48,8 @@ public class MusicPlayerFacade {
     }
 
     public void play(Music music) {
-        //
+        scheduler.clearQueue();
+        commandQueue.enqueue(new AddMusicCommand(music));
     }
 
     public void pause() {
