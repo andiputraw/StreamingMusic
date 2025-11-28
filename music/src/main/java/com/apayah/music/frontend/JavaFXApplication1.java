@@ -39,8 +39,11 @@ public class JavaFXApplication1 extends Application {
         stage.setScene(scene);
 
         // Set fullscreen and maximize window
-        stage.setMaximized(true);
-        stage.setResizable(true);
+        // stage.setMaximized(true);
+        stage.setMaxWidth(1280);
+        stage.setMinHeight(900);
+        stage.setMaxHeight(900);
+        stage.setResizable(false);
         stage.setFullScreen(false); // Set to true for true fullscreen
 
         stage.show();
