@@ -5,12 +5,14 @@ C:\TUGAS KULIAH\PBO\TubesGUI_StreamingMusic\StreamingMusic\music\src\main\java\c
 C:\TUGAS KULIAH\PBO\TubesGUI_StreamingMusic\StreamingMusic\music\src\main\java\com\apayah\music\command\backend\SeekMusicEvent.java
 C:\TUGAS KULIAH\PBO\TubesGUI_StreamingMusic\StreamingMusic\music\src\main\java\com\apayah\music\Main.java
 C:\TUGAS KULIAH\PBO\TubesGUI_StreamingMusic\StreamingMusic\music\src\main\java\com\apayah\music\command\backend\SeekMusicCommand.java
+C:\TUGAS KULIAH\PBO\TubesGUI_StreamingMusic\StreamingMusic\music\src\main\java\com\apayah\music\playlist\PlaylistManager.java
 C:\TUGAS KULIAH\PBO\TubesGUI_StreamingMusic\StreamingMusic\music\src\main\java\com\apayah\music\frontend\JavaFXApplication1.java
 C:\TUGAS KULIAH\PBO\TubesGUI_StreamingMusic\StreamingMusic\music\src\main\java\com\apayah\music\frontend\controllers\HeaderFXMLController.java
 C:\TUGAS KULIAH\PBO\TubesGUI_StreamingMusic\StreamingMusic\music\src\main\java\com\apayah\music\backend\MusicPlayerCommandQueue.java
 C:\TUGAS KULIAH\PBO\TubesGUI_StreamingMusic\StreamingMusic\music\src\main\java\com\apayah\music\backend\MusicManager.java
 C:\TUGAS KULIAH\PBO\TubesGUI_StreamingMusic\StreamingMusic\music\src\main\java\com\apayah\music\frontend\controllers\AppLayoutController.java
 C:\TUGAS KULIAH\PBO\TubesGUI_StreamingMusic\StreamingMusic\music\src\main\java\com\apayah\music\frontend\controllers\MainLayoutController.java
+C:\TUGAS KULIAH\PBO\TubesGUI_StreamingMusic\StreamingMusic\music\src\main\java\com\apayah\music\frontend\controllers\PlaylistModalController.java
 C:\TUGAS KULIAH\PBO\TubesGUI_StreamingMusic\StreamingMusic\music\src\main\java\com\apayah\music\frontend\AppState.java
 C:\TUGAS KULIAH\PBO\TubesGUI_StreamingMusic\StreamingMusic\music\src\main\java\com\apayah\music\command\backend\AddMusicCommand.java
 C:\TUGAS KULIAH\PBO\TubesGUI_StreamingMusic\StreamingMusic\music\src\main\java\com\apayah\music\command\backend\PauseMusicEvent.java
@@ -21,6 +23,7 @@ C:\TUGAS KULIAH\PBO\TubesGUI_StreamingMusic\StreamingMusic\music\src\main\java\c
 C:\TUGAS KULIAH\PBO\TubesGUI_StreamingMusic\StreamingMusic\music\src\main\java\com\apayah\music\command\backend\PauseMusicCommand.java
 C:\TUGAS KULIAH\PBO\TubesGUI_StreamingMusic\StreamingMusic\music\src\main\java\com\apayah\music\command\backend\ResumeMusicEvent.java
 C:\TUGAS KULIAH\PBO\TubesGUI_StreamingMusic\StreamingMusic\music\src\main\java\com\apayah\music\command\backend\contract\Command.java
+C:\TUGAS KULIAH\PBO\TubesGUI_StreamingMusic\StreamingMusic\music\src\main\java\com\apayah\music\playlist\Playlist.java
 C:\TUGAS KULIAH\PBO\TubesGUI_StreamingMusic\StreamingMusic\music\src\main\java\com\apayah\music\backend\MusicQueueScheduler.java
 C:\TUGAS KULIAH\PBO\TubesGUI_StreamingMusic\StreamingMusic\music\src\main\java\com\apayah\music\command\backend\AddMusicEvent.java
 C:\TUGAS KULIAH\PBO\TubesGUI_StreamingMusic\StreamingMusic\music\src\main\java\com\apayah\music\frontend\SongData.java
