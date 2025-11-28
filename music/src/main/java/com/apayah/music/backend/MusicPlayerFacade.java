@@ -47,6 +47,10 @@ public class MusicPlayerFacade {
         this.commandQueue = new MusicPlayerCommandQueue(musicManager, this.scheduler);
     }
 
+    private int getIndex() {
+        return musicQueue.getCurrentIndex();
+    }
+
     public void play(Music music) {
         scheduler.clearQueue();
         commandQueue.enqueue(new AddMusicCommand(music));
@@ -62,6 +66,18 @@ public class MusicPlayerFacade {
 
     public void seek(long milis) {
         commandQueue.enqueue(new SeekMusicCommand(milis));
+    }
+
+    public void next() {
+        if(!musicQueue.isOnEnd()) {
+            commandQueue.enqueue( new JumpMusicCommand(this.getIndex() + 1) );
+        }
+    }
+
+    public void pref() {
+        if(!musicQueue.isOnStart()) {
+            commandQueue.enqueue( new JumpMusicCommand(this.getIndex() - 1) );
+        }
     }
 
     public void jump(int index) {

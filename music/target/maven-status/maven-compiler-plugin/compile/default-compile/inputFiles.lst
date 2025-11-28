@@ -1,31 +1,34 @@
-C:\TUGAS KULIAH\PBO\TubesGUI_StreamingMusic\StreamingMusic\music\src\main\java\com\apayah\music\backend\MusicSearcher.java
-C:\TUGAS KULIAH\PBO\TubesGUI_StreamingMusic\StreamingMusic\music\src\main\java\com\apayah\music\backend\Speaker.java
-C:\TUGAS KULIAH\PBO\TubesGUI_StreamingMusic\StreamingMusic\music\src\main\java\com\apayah\music\command\backend\JumpMusicEvent.java
-C:\TUGAS KULIAH\PBO\TubesGUI_StreamingMusic\StreamingMusic\music\src\main\java\com\apayah\music\frontend\controllers\ControlFXMLController.java
-C:\TUGAS KULIAH\PBO\TubesGUI_StreamingMusic\StreamingMusic\music\src\main\java\com\apayah\music\command\backend\SeekMusicEvent.java
-C:\TUGAS KULIAH\PBO\TubesGUI_StreamingMusic\StreamingMusic\music\src\main\java\com\apayah\music\Main.java
-C:\TUGAS KULIAH\PBO\TubesGUI_StreamingMusic\StreamingMusic\music\src\main\java\com\apayah\music\command\backend\SeekMusicCommand.java
-C:\TUGAS KULIAH\PBO\TubesGUI_StreamingMusic\StreamingMusic\music\src\main\java\com\apayah\music\frontend\JavaFXApplication1.java
-C:\TUGAS KULIAH\PBO\TubesGUI_StreamingMusic\StreamingMusic\music\src\main\java\com\apayah\music\frontend\controllers\HeaderFXMLController.java
-C:\TUGAS KULIAH\PBO\TubesGUI_StreamingMusic\StreamingMusic\music\src\main\java\com\apayah\music\backend\MusicPlayerCommandQueue.java
-C:\TUGAS KULIAH\PBO\TubesGUI_StreamingMusic\StreamingMusic\music\src\main\java\com\apayah\music\backend\MusicManager.java
-C:\TUGAS KULIAH\PBO\TubesGUI_StreamingMusic\StreamingMusic\music\src\main\java\com\apayah\music\frontend\controllers\AppLayoutController.java
-C:\TUGAS KULIAH\PBO\TubesGUI_StreamingMusic\StreamingMusic\music\src\main\java\com\apayah\music\frontend\controllers\MainLayoutController.java
-C:\TUGAS KULIAH\PBO\TubesGUI_StreamingMusic\StreamingMusic\music\src\main\java\com\apayah\music\frontend\AppState.java
-C:\TUGAS KULIAH\PBO\TubesGUI_StreamingMusic\StreamingMusic\music\src\main\java\com\apayah\music\command\backend\AddMusicCommand.java
-C:\TUGAS KULIAH\PBO\TubesGUI_StreamingMusic\StreamingMusic\music\src\main\java\com\apayah\music\command\backend\PauseMusicEvent.java
-C:\TUGAS KULIAH\PBO\TubesGUI_StreamingMusic\StreamingMusic\music\src\main\java\com\apayah\music\frontend\controllers\PlaylistFXMLController.java
-C:\TUGAS KULIAH\PBO\TubesGUI_StreamingMusic\StreamingMusic\music\src\main\java\com\apayah\music\backend\MusicQueue.java
-C:\TUGAS KULIAH\PBO\TubesGUI_StreamingMusic\StreamingMusic\music\src\main\java\com\apayah\music\command\backend\ResumeMusicCommand.java
-C:\TUGAS KULIAH\PBO\TubesGUI_StreamingMusic\StreamingMusic\music\src\main\java\com\apayah\music\backend\MusicPlayerFacade.java
-C:\TUGAS KULIAH\PBO\TubesGUI_StreamingMusic\StreamingMusic\music\src\main\java\com\apayah\music\command\backend\PauseMusicCommand.java
-C:\TUGAS KULIAH\PBO\TubesGUI_StreamingMusic\StreamingMusic\music\src\main\java\com\apayah\music\command\backend\ResumeMusicEvent.java
-C:\TUGAS KULIAH\PBO\TubesGUI_StreamingMusic\StreamingMusic\music\src\main\java\com\apayah\music\command\backend\contract\Command.java
-C:\TUGAS KULIAH\PBO\TubesGUI_StreamingMusic\StreamingMusic\music\src\main\java\com\apayah\music\backend\MusicQueueScheduler.java
-C:\TUGAS KULIAH\PBO\TubesGUI_StreamingMusic\StreamingMusic\music\src\main\java\com\apayah\music\command\backend\AddMusicEvent.java
-C:\TUGAS KULIAH\PBO\TubesGUI_StreamingMusic\StreamingMusic\music\src\main\java\com\apayah\music\frontend\SongData.java
-C:\TUGAS KULIAH\PBO\TubesGUI_StreamingMusic\StreamingMusic\music\src\main\java\com\apayah\music\frontend\controllers\FXMLDocumentController.java
-C:\TUGAS KULIAH\PBO\TubesGUI_StreamingMusic\StreamingMusic\music\src\main\java\com\apayah\music\command\backend\ItemLoadedCommand.java
-C:\TUGAS KULIAH\PBO\TubesGUI_StreamingMusic\StreamingMusic\music\src\main\java\com\apayah\music\command\backend\ClearQueueCommand.java
-C:\TUGAS KULIAH\PBO\TubesGUI_StreamingMusic\StreamingMusic\music\src\main\java\com\apayah\music\backend\Music.java
-C:\TUGAS KULIAH\PBO\TubesGUI_StreamingMusic\StreamingMusic\music\src\main\java\com\apayah\music\command\backend\JumpMusicCommand.java
+/home/andiputraw/Projects/MakulPBO/StreamingMusic/music/src/main/java/com/apayah/music/backend/Speaker.java
+/home/andiputraw/Projects/MakulPBO/StreamingMusic/music/src/main/java/com/apayah/music/Main.java
+/home/andiputraw/Projects/MakulPBO/StreamingMusic/music/src/main/java/com/apayah/music/command/backend/JumpMusicEvent.java
+/home/andiputraw/Projects/MakulPBO/StreamingMusic/music/src/main/java/com/apayah/music/frontend/controllers/MainLayoutController.java
+/home/andiputraw/Projects/MakulPBO/StreamingMusic/music/src/main/java/com/apayah/music/frontend/controllers/FXMLDocumentController.java
+/home/andiputraw/Projects/MakulPBO/StreamingMusic/music/src/main/java/com/apayah/music/backend/MusicPlayerCommandQueue.java
+/home/andiputraw/Projects/MakulPBO/StreamingMusic/music/src/main/java/com/apayah/music/playlist/PlaylistManager.java
+/home/andiputraw/Projects/MakulPBO/StreamingMusic/music/src/main/java/com/apayah/music/command/backend/ResumeMusicCommand.java
+/home/andiputraw/Projects/MakulPBO/StreamingMusic/music/src/main/java/com/apayah/music/command/backend/PauseMusicEvent.java
+/home/andiputraw/Projects/MakulPBO/StreamingMusic/music/src/main/java/com/apayah/music/command/backend/JumpMusicCommand.java
+/home/andiputraw/Projects/MakulPBO/StreamingMusic/music/src/main/java/com/apayah/music/backend/MusicQueue.java
+/home/andiputraw/Projects/MakulPBO/StreamingMusic/music/src/main/java/com/apayah/music/command/backend/SeekMusicEvent.java
+/home/andiputraw/Projects/MakulPBO/StreamingMusic/music/src/main/java/com/apayah/music/frontend/AppState.java
+/home/andiputraw/Projects/MakulPBO/StreamingMusic/music/src/main/java/com/apayah/music/frontend/SongData.java
+/home/andiputraw/Projects/MakulPBO/StreamingMusic/music/src/main/java/com/apayah/music/command/backend/ResumeMusicEvent.java
+/home/andiputraw/Projects/MakulPBO/StreamingMusic/music/src/main/java/com/apayah/music/backend/MusicQueueScheduler.java
+/home/andiputraw/Projects/MakulPBO/StreamingMusic/music/src/main/java/com/apayah/music/command/backend/AddMusicCommand.java
+/home/andiputraw/Projects/MakulPBO/StreamingMusic/music/src/main/java/com/apayah/music/command/backend/AddMusicEvent.java
+/home/andiputraw/Projects/MakulPBO/StreamingMusic/music/src/main/java/com/apayah/music/backend/MusicSearcher.java
+/home/andiputraw/Projects/MakulPBO/StreamingMusic/music/src/main/java/com/apayah/music/frontend/controllers/AppLayoutController.java
+/home/andiputraw/Projects/MakulPBO/StreamingMusic/music/src/main/java/com/apayah/music/frontend/JavaFXApplication1.java
+/home/andiputraw/Projects/MakulPBO/StreamingMusic/music/src/main/java/com/apayah/music/command/backend/SeekMusicCommand.java
+/home/andiputraw/Projects/MakulPBO/StreamingMusic/music/src/main/java/com/apayah/music/frontend/controllers/HeaderFXMLController.java
+/home/andiputraw/Projects/MakulPBO/StreamingMusic/music/src/main/java/com/apayah/music/frontend/controllers/PlaylistModalController.java
+/home/andiputraw/Projects/MakulPBO/StreamingMusic/music/src/main/java/com/apayah/music/command/backend/ClearQueueCommand.java
+/home/andiputraw/Projects/MakulPBO/StreamingMusic/music/src/main/java/com/apayah/music/backend/MusicPlayerFacade.java
+/home/andiputraw/Projects/MakulPBO/StreamingMusic/music/src/main/java/com/apayah/music/command/backend/PauseMusicCommand.java
+/home/andiputraw/Projects/MakulPBO/StreamingMusic/music/src/main/java/com/apayah/music/frontend/controllers/ControlFXMLController.java
+/home/andiputraw/Projects/MakulPBO/StreamingMusic/music/src/main/java/com/apayah/music/frontend/controllers/PlaylistFXMLController.java
+/home/andiputraw/Projects/MakulPBO/StreamingMusic/music/src/main/java/com/apayah/music/command/backend/ItemLoadedCommand.java
+/home/andiputraw/Projects/MakulPBO/StreamingMusic/music/src/main/java/com/apayah/music/command/backend/contract/Command.java
+/home/andiputraw/Projects/MakulPBO/StreamingMusic/music/src/main/java/com/apayah/music/backend/Music.java
+/home/andiputraw/Projects/MakulPBO/StreamingMusic/music/src/main/java/com/apayah/music/playlist/Playlist.java
+/home/andiputraw/Projects/MakulPBO/StreamingMusic/music/src/main/java/com/apayah/music/backend/MusicManager.java

@@ -43,6 +43,10 @@ public class MusicQueue {
         return this.musics.size() == 0;
     }
 
+    public int getCurrentIndex() {
+        return this.pos - 1;
+    }
+
     public Music next() {
         if(isOnEnd()) {
             new IndexOutOfBoundsException();
@@ -55,6 +59,10 @@ public class MusicQueue {
 
     public boolean isOnEnd() {
         return this.pos >= this.musics.size(); 
+    }
+
+    public boolean isOnStart() {
+        return this.pos <= 1;
     }
     
     public void clearQueue() {

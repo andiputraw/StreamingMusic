@@ -263,6 +263,6 @@
         
         <!-- Music Control Bar at Bottom -->
         <!-- Removed to avoid duplication with AppLayout's control bar -->
+         
    </children>
 </VBox>
-
