@@ -7,6 +7,7 @@ import java.util.Optional;
 import java.util.ResourceBundle;
 
 import com.apayah.music.backend.Music;
+import com.apayah.music.backend.MusicPlayerFacade;
 import com.apayah.music.frontend.AppState;
 import com.apayah.music.frontend.SongData;
 
@@ -35,7 +36,10 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 
+import com.apayah.music.playlist.Playlist;
 import com.apayah.music.playlist.PlaylistManager;
+import com.sedmelluq.discord.lavaplayer.track.AudioTrackInfo;
+
 import java.util.stream.Collectors;
 
 public class PlaylistFXMLController implements Initializable, AppState.MusicUpdateListener {
@@ -268,13 +272,16 @@ public class PlaylistFXMLController implements Initializable, AppState.MusicUpda
             System.out.println("Added '" + songName + "' to playlist: " + playlistName);
             showSuccessMessage("'" + (selectedSongForModal != null ? selectedSongForModal.getSongTitle() : "Song") +
                     "' added to " + playlistName + " successfully!");
+            PlaylistManager.getInstance().tambahLaguKePlaylist(playlistName, songName,
+                    selectedSongForModal.getMusic().getTrack().getInfo().uri);
             selectedSongForModal = null;
         });
     }
 
     @FXML
     private void openPlaylistModal() throws IOException {
-        // This method is no longer used, but we keep it to avoid breaking other parts of the code for now.
+        // This method is no longer used, but we keep it to avoid breaking other parts
+        // of the code for now.
     }
 
     /**
@@ -377,6 +384,22 @@ public class PlaylistFXMLController implements Initializable, AppState.MusicUpda
      */
     public void setParentController(MainLayoutController parentController) {
         this.parentController = parentController;
+    }
+
+    @FXML
+    public void onPlayPlaylistButtonClick() {
+        var musicPlayerFacade = AppState.getInstance().getMusicPlayer();
+        musicPlayerFacade.pause();
+        musicPlayerFacade.clearQueue();
+        ObservableList<SongData> allSongs = songTableView.getItems();
+        for (SongData song : allSongs) {
+            if (song.getMusic() != null) {
+                musicPlayerFacade.addToQueue(song.getMusic());
+            }
+        }
+        musicPlayerFacade.jump(0);
+        musicPlayerFacade.resume();
+        
     }
 
     /**
@@ -704,5 +727,52 @@ public class PlaylistFXMLController implements Initializable, AppState.MusicUpda
                 songTableView.setItems(searchResults);
             });
         });
+    }
+
+    public void loadFromPlaylist(Playlist playlist) {
+        System.err.println(playlist.getNama());
+        MusicPlayerFacade musicPlayer = AppState.getInstance().getMusicPlayer();
+        List<String> links = playlist.getDaftarLinkLagu();
+        ObservableList<SongData> searchResults = FXCollections.observableArrayList();
+        for (int i = 0; i < links.size(); i++) {
+            int index = i;
+            System.err.println("Searching " + links.get(index));
+
+            musicPlayer.search(links.get(index)).thenAccept(musics -> {
+                System.err.println("Loaded " + musics.size());
+                javafx.application.Platform.runLater(() -> {
+                    if (musics.size() > 0) {
+                        Music m = musics.get(0);
+                        AudioTrackInfo info = m.getTrack().getInfo();
+                        searchResults.add(new SongData(
+                                index,
+                                info.title,
+                                info.author,
+                                "-",
+                                formatDurationFromMillis(m.getTrack().getDuration()), new Image(info.artworkUrl), m));
+                        songTableView.setItems(searchResults);
+                    }
+                });
+            });
+
+        }
+
+        // AppState.getInstance().getMusicPlayer().search(query).thenAccept(musics -> {
+        // javafx.application.Platform.runLater(() -> {
+        // ObservableList<SongData> searchResults = FXCollections.observableArrayList();
+        // int index = 1;
+        // for (Music music : musics) {
+        // searchResults.add(new SongData(
+        // index++,
+        // music.getTrack().getInfo().title,
+        // music.getTrack().getInfo().author,
+        // "-", // Album
+        // formatDurationFromMillis(music.getTrack().getDuration()),
+        // null, // Image
+        // music));
+        // }
+        // songTableView.setItems(searchResults);
+        // });
+        // });
     }
 }

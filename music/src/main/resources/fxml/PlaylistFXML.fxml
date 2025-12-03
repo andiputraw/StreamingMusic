@@ -55,7 +55,7 @@
                <VBox.margin>
                   <Insets left="35.0" top="20.0" />
                </VBox.margin>
-               <Button fx:id="playButton" minHeight="39.0" minWidth="41.0" mnemonicParsing="false" prefHeight="37.0" prefWidth="37.0" styleClass="circle-button" stylesheets="@../css/style.css">
+               <Button fx:id="playButton" onAction="#onPlayPlaylistButtonClick" minHeight="39.0" minWidth="41.0" mnemonicParsing="false" prefHeight="37.0" prefWidth="37.0" styleClass="circle-button" stylesheets="@../css/style.css">
                    <graphic>
                      <ImageView fitHeight="23.0" fitWidth="23.0" pickOnBounds="true" preserveRatio="true">
                         <Image url="@../image/playlist.png" />

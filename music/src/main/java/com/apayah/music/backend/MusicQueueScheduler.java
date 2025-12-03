@@ -1,5 +1,6 @@
 package com.apayah.music.backend;
 
+import com.apayah.music.frontend.AppState;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.player.event.AudioEventAdapter;
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
@@ -80,6 +81,7 @@ public class MusicQueueScheduler extends AudioEventAdapter {
             // AudioTrack trackToPlay = nextMusic.getTrack().makeClone();
             // player.startTrack(trackToPlay, false);
             player.startTrack(nextMusic.getTrack().makeClone(), false);
+            AppState.getInstance().notifyMusicChanged(nextMusic);
         } else {
             // End of queue, player stops.
         }
@@ -103,6 +105,7 @@ public class MusicQueueScheduler extends AudioEventAdapter {
 
         if (musicToPlay != null) {
             player.startTrack(musicToPlay.getTrack().makeClone(), false);
+            AppState.getInstance().notifyMusicChanged(musicToPlay);
             return true;
         }
         return false;

@@ -9,6 +9,7 @@ import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.collections.ListChangeListener;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -70,12 +71,15 @@ public class FXMLDocumentController implements Initializable, AppState.MusicUpda
     }
 
     @FXML
-    private void onPlaylistItemClicked(MouseEvent event) {
-        try {
+    private EventHandler<? super MouseEvent> onPlaylistItemClicked(Playlist playlist) {
+     return (MouseEvent event) -> {
+          try {
             // Use AppLayout to switch to playlist content
             AppLayoutController appController = AppLayoutController.getInstance();
+            AppState.getInstance().setSelectedPlaylist(playlist);
             if (appController != null) {
                 appController.switchToContent("PlaylistFXML.fxml");
+                PlaylistFXMLController.getInstance().loadFromPlaylist(playlist);
             } else {
                 System.err.println("AppLayoutController instance not found");
             }
@@ -84,7 +88,25 @@ public class FXMLDocumentController implements Initializable, AppState.MusicUpda
             e.printStackTrace();
             System.err.println("Error loading PlaylistFXML: " + e.getMessage());
         }
+     };
     }
+
+    // @FXML
+    // private void onPlaylistItemClicked(MouseEvent event) {
+    //     try {
+    //         // Use AppLayout to switch to playlist content
+    //         AppLayoutController appController = AppLayoutController.getInstance();
+    //         if (appController != null) {
+    //             appController.switchToContent("PlaylistFXML.fxml");
+    //         } else {
+    //             System.err.println("AppLayoutController instance not found");
+    //         }
+
+    //     } catch (Exception e) {
+    //         e.printStackTrace();
+    //         System.err.println("Error loading PlaylistFXML: " + e.getMessage());
+    //     }
+    // }
     
     @FXML
     private void onAddPlaylistButtonClick(ActionEvent event) {
@@ -116,18 +138,19 @@ public class FXMLDocumentController implements Initializable, AppState.MusicUpda
     private void loadPlaylists() {
         playlistContainer.getChildren().clear();
         for (Playlist playlist : playlistManager.getSemuaPlaylist()) {
-            playlistContainer.getChildren().add(createPlaylistItem(playlist.getNama(), "@../image/song1.jpg"));
+            playlistContainer.getChildren().add(createPlaylistItem(playlist, "@../image/song1.jpg"));
         }
     }
 
-    private HBox createPlaylistItem(String playlistName, String imageUrl) {
+    private HBox createPlaylistItem(Playlist playlist, String imageUrl) {
+        var onClickHandler = onPlaylistItemClicked(playlist);
         HBox playlistItem = new HBox();
         playlistItem.setAlignment(Pos.CENTER_LEFT);
         playlistItem.setPrefHeight(60.0);
         playlistItem.setPrefWidth(400.0);
         playlistItem.setSpacing(12.0);
         playlistItem.getStyleClass().add("playlist-box");
-        playlistItem.setOnMouseClicked(this::onPlaylistItemClicked);
+        playlistItem.setOnMouseClicked(onClickHandler);
 
         ImageView imageView = new ImageView();
         imageView.setFitHeight(44.0);
@@ -140,7 +163,7 @@ public class FXMLDocumentController implements Initializable, AppState.MusicUpda
         vbox.setAlignment(Pos.CENTER_LEFT);
         vbox.setSpacing(2.0);
 
-        Label label = new Label(playlistName);
+        Label label = new Label(playlist.getNama());
         label.getStyleClass().add("recently-played-label");
 
         vbox.getChildren().add(label);

@@ -107,6 +107,10 @@ public class MusicPlayerFacade {
         commandQueue.enqueue(new ClearQueueCommand());
     }
 
+    public Music getCurrentMusic() {
+        return this.playingQueue().get(getIndex());
+    }
+
     public static void main(String[] args) throws Exception {
         System.out.println("Start");
         var facade = new MusicPlayerFacade();
