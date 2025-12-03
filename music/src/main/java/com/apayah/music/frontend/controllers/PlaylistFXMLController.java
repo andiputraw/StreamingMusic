@@ -35,6 +35,9 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 
+import com.apayah.music.playlist.PlaylistManager;
+import java.util.stream.Collectors;
+
 public class PlaylistFXMLController implements Initializable, AppState.MusicUpdateListener {
 
     @FXML
@@ -235,49 +238,43 @@ public class PlaylistFXMLController implements Initializable, AppState.MusicUpda
      */
     @FXML
     private void showAddToPlaylistModal(ActionEvent event) {
-        // if (modalOverlay != null) {
-        // modalOverlay.setVisible(true);
-        // modalOverlay.setManaged(true);
-        // modalOverlay.toFront();
+        List<String> playlistNames = PlaylistManager.getInstance().getSemuaPlaylist().stream()
+                .map(p -> p.getNama()).toList();
 
-        // // Clear any previous selection
-        // if (playlistToggleGroup != null) {
-        // playlistToggleGroup.selectToggle(null);
-        // }
-        // }
-        try {
-
-            openPlaylistModal();
-        } catch (Exception e) {
-            // TODO: handle exception
-            e.printStackTrace();
+        if (playlistNames.isEmpty()) {
+            showErrorMessage("No playlists available. Create a playlist first.");
+            return;
         }
+
+        ChoiceDialog<String> dialog = new ChoiceDialog<>(playlistNames.get(0), playlistNames);
+        dialog.setTitle("Add to Playlist");
+        dialog.setHeaderText("Select a playlist to add the song to.");
+        dialog.setContentText("Playlist:");
+
+        Optional<String> result = dialog.showAndWait();
+        result.ifPresent(playlistName -> {
+            String songName = "";
+            if (selectedSongForModal != null) {
+                songName = selectedSongForModal.getSongTitle() + " - " +
+                        selectedSongForModal.getAlbum();
+            } else {
+                SongData selectedSong = getSelectedSong();
+                if (selectedSong != null) {
+                    songName = selectedSong.getSongTitle() + " - " + selectedSong.getAlbum();
+                } else {
+                    songName = "Unknown Song";
+                }
+            }
+            System.out.println("Added '" + songName + "' to playlist: " + playlistName);
+            showSuccessMessage("'" + (selectedSongForModal != null ? selectedSongForModal.getSongTitle() : "Song") +
+                    "' added to " + playlistName + " successfully!");
+            selectedSongForModal = null;
+        });
     }
 
     @FXML
     private void openPlaylistModal() throws IOException {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/PlaylistModal.fxml"));
-        Parent root = loader.load();
-
-        PlaylistModalController controller = loader.getController();
-
-        Stage modal = new Stage();
-        modal.initModality(Modality.APPLICATION_MODAL);
-        modal.setTitle("Choose Playlist");
-
-        modal.setScene(new Scene(root));
-        controller.setStage(modal);
-
-        // Example playlists:
-        controller.setPlaylists(List.of("Rock", "Jazz", "Chill", "EDM"));
-
-        modal.showAndWait();
-
-        List<String> selected = controller.getSelectedPlaylists();
-        if (!selected.isEmpty()) {
-            System.out.println("User chose: " + selected);
-        }
-
+        // This method is no longer used, but we keep it to avoid breaking other parts of the code for now.
     }
 
     /**

@@ -5,15 +5,18 @@ import java.util.List;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 public class PlaylistModalController {
 
     @FXML private VBox radioContainer;
+    @FXML private TextField playlistNameField;
+
 
     private Stage stage;
-    private List<String> selectedPlaylists = new ArrayList<>();
+    private String newPlaylistName;
 
     public void setStage(Stage stage) {
         this.stage = stage;
@@ -28,24 +31,19 @@ public class PlaylistModalController {
 
     @FXML
     private void onOk() {
-        selectedPlaylists.clear();
-
-        for (var node : radioContainer.getChildren()) {
-            if (node instanceof CheckBox cb && cb.isSelected()) {
-                selectedPlaylists.add(cb.getText());
-            }
+        if (playlistNameField.getText() != null && !playlistNameField.getText().isEmpty()) {
+            newPlaylistName = playlistNameField.getText();
         }
-
         stage.close();
     }
 
     @FXML
     private void onCancel() {
-        selectedPlaylists.clear();
+        newPlaylistName = null;
         stage.close();
     }
 
-    public List<String> getSelectedPlaylists() {
-        return selectedPlaylists;
+    public String getNewPlaylistName() {
+        return newPlaylistName;
     }
 }

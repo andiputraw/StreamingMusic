@@ -50,43 +50,25 @@
                         </Button>
                      </HBox>
 
-                     <!-- Label Recently Played Music -->
-                     <Label styleClass="recently-played-label" stylesheets="@../css/style.css" text="Your Playlist" translateY="20.0">
-                        <VBox.margin>
-                           <Insets left="35.0" />
-                        </VBox.margin>
-                     </Label>
-            
-                     <!-- HBox for horizontal playlist items -->
-                     <HBox spacing="15" translateY="10.0">
-                        <VBox.margin>
-                           <Insets left="45.0" right="45.0" top="10.0" />
-                        </VBox.margin>
-                        
-                        <!-- First Playlist Item -->
-                        <HBox alignment="CENTER_LEFT" prefHeight="60.0" prefWidth="400.0" styleClass="playlist-box" spacing="12" onMouseClicked="#onPlaylistItemClicked">
-                           <ImageView fitHeight="44.0" fitWidth="44.0" styleClass="playlist-image">
-                              <image>
-                                 <Image url="@../image/song1.jpg" />
-                              </image>
-                           </ImageView>
-                           <VBox alignment="CENTER_LEFT" spacing="2">
-                              <Label styleClass="recently-played-label" text="Kaguya Sama: Love is War" />
-                           </VBox>
-                        </HBox>
-
-                        <!-- Second Playlist Item -->
-                        <HBox alignment="CENTER_LEFT" prefHeight="60.0" prefWidth="400.0" styleClass="playlist-box" spacing="12" onMouseClicked="#onPlaylistItemClicked">
-                           <ImageView fitHeight="44.0" fitWidth="44.0" styleClass="playlist-image">
-                              <image>
-                                 <Image url="@../image/song2.jpg" />
-                              </image>
-                           </ImageView>
-                           <VBox alignment="CENTER_LEFT" spacing="2">
-                              <Label styleClass="recently-played-label" text="BL8M" />
-                           </VBox>
-                        </HBox>
+                     <!-- HBox for Title and Add Button -->
+                     <HBox alignment="CENTER_LEFT" spacing="10">
+                         <Label styleClass="recently-played-label" stylesheets="@../css/style.css" text="Your Playlist">
+                             <VBox.margin>
+                                 <Insets left="35.0" />
+                             </VBox.margin>
+                         </Label>
+                         <Button fx:id="addPlaylistButton" onAction="#onAddPlaylistButtonClick" styleClass="circle-dark-button" text="+" />
+                         <VBox.margin>
+                             <Insets top="20.0" />
+                         </VBox.margin>
                      </HBox>
+
+                     <!-- VBox for dynamic playlist items -->
+                     <VBox fx:id="playlistContainer" spacing="10" translateY="10.0">
+                         <VBox.margin>
+                             <Insets left="45.0" right="45.0" top="10.0" />
+                         </VBox.margin>
+                     </VBox>
             
                      <Label styleClass="recently-played-label" stylesheets="@../css/style.css" text="Recently Played Music">
                         <VBox.margin>

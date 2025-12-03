@@ -1,55 +1,68 @@
 package com.apayah.music.playlist;
 
 import java.io.*;
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 
 public class PlaylistManager {
 
-    private Map<String, Playlist> semuaPlaylist;
+    private static PlaylistManager instance;
+    private ObservableList<Playlist> semuaPlaylist;
     private final String filePath = "playlists.dat";
 
-    public PlaylistManager() {
-        semuaPlaylist = new HashMap<>();
+    private PlaylistManager() {
+        semuaPlaylist = FXCollections.observableArrayList();
         loadDariFile();
     }
 
+    public static synchronized PlaylistManager getInstance() {
+        if (instance == null) {
+            instance = new PlaylistManager();
+        }
+        return instance;
+    }
+
     public void buatPlaylist(String namaPlaylist) {
-        if (!semuaPlaylist.containsKey(namaPlaylist)) {
-            semuaPlaylist.put(namaPlaylist, new Playlist(namaPlaylist));
+        // Check if a playlist with the same name already exists
+        if (semuaPlaylist.stream().noneMatch(p -> p.getNama().equals(namaPlaylist))) {
+            semuaPlaylist.add(new Playlist(namaPlaylist));
             simpanKeFile();
         }
     }
 
     public void hapusPlaylist(String namaPlaylist) {
-        semuaPlaylist.remove(namaPlaylist);
+        semuaPlaylist.removeIf(p -> p.getNama().equals(namaPlaylist));
         simpanKeFile();
     }
 
     public void tambahLaguKePlaylist(String namaPlaylist, String judul, String link) {
-        Playlist p = semuaPlaylist.get(namaPlaylist);
-        if (p != null) {
-            p.tambahLagu(judul, link);
-            simpanKeFile();
+        for (Playlist p : semuaPlaylist) {
+            if (p.getNama().equals(namaPlaylist)) {
+                p.tambahLagu(judul, link);
+                simpanKeFile();
+                break;
+            }
         }
     }
 
-    // Lihat semua playlist
-    public Map<String, Playlist> getSemuaPlaylist() {
+    public ObservableList<Playlist> getSemuaPlaylist() {
         return semuaPlaylist;
     }
 
-    // Ambil playlist
     public Playlist getPlaylist(String namaPlaylist) {
-        return semuaPlaylist.get(namaPlaylist);
+        for (Playlist p : semuaPlaylist) {
+            if (p.getNama().equals(namaPlaylist)) {
+                return p;
+            }
+        }
+        return null;
     }
-
-    // =============== FILE HANDLING ===============
 
     public void simpanKeFile() {
         try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(filePath))) {
-            oos.writeObject(semuaPlaylist);
+            oos.writeObject(new ArrayList<>(semuaPlaylist));
             System.out.println("Playlist berhasil disimpan!");
         } catch (IOException e) {
             e.printStackTrace();
@@ -60,40 +73,15 @@ public class PlaylistManager {
     public void loadDariFile() {
         File file = new File(filePath);
         if (!file.exists()) {
-            System.out.println("Belum ada file playlist, membuat baru...");
             return;
         }
 
         try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(filePath))) {
-            semuaPlaylist = (Map<String, Playlist>) ois.readObject();
+            List<Playlist> loadedPlaylists = (List<Playlist>) ois.readObject();
+            semuaPlaylist.setAll(loadedPlaylists);
             System.out.println("Playlist berhasil dimuat dari file!");
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
-
-    public static void main(String[] args){
-        // PlaylistManager manager = new PlaylistManager();
-        // manager.buatPlaylist("AndiBesar");
-        // manager.buatPlaylist("NazwaKecil");
-        // manager.tambahLaguKePlaylist("AndiBesar", "Small Fragile Hearts");
-        // manager.tambahLaguKePlaylist("AndiBesar", "Baby");
-        // manager.tambahLaguKePlaylist("NazwaKecil", "Small Fragile Hearts");
-        // manager.simpanKeFile();
-
-        // PlaylistManager manager = new PlaylistManager();
-        // manager.buatPlaylist("AndiBesar");
-        // manager.tambahLaguKePlaylist("AndiBesar", "Small Fragile Hearts", "https://soundcloud.com/victorlundbergofficial/small-fragile-hearts");
-
-        PlaylistManager manager = new PlaylistManager();
-        Playlist percobaan = manager.getPlaylist("AndiBesar");
-
-        System.out.println("=== PLAYLIST " + percobaan.getNama() + " ===");
-
-        for (String item : percobaan.getDaftarLagu()) {
-            System.out.println("- Judul: " + percobaan.getJudul(item));
-            System.out.println("  Link : " + percobaan.getLink(item));
-        }
-
     }
 }
