@@ -38,7 +38,7 @@
                            </ImageView>
                            <VBox alignment="CENTER_LEFT" spacing="10">
                               <Label styleClass="categories-label" text="Your Playlist" />
-                              <Label styleClass="recently-played-label" text="Judul Playlist">
+                              <Label fx:id="playlistTitle" styleClass="recently-played-label" text="Judul Playlist">
                                  <font>
                                     <Font size="24.0" />
                                  </font>
@@ -147,7 +147,7 @@
                   </VBox>
                  
                  <!-- Lyrics / Extra Info -->
-                          <Pane prefHeight="50.0" prefWidth="50.0" styleClass="box-pane" stylesheets="@../css/style.css">
+                          <Pane prefHeight="1000.0" prefWidth="50.0" styleClass="box-pane" stylesheets="@../css/style.css">
                              <children>
                              </children>
                           </Pane>

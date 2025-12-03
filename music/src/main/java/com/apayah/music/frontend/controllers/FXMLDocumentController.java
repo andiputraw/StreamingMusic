@@ -79,7 +79,10 @@ public class FXMLDocumentController implements Initializable, AppState.MusicUpda
             AppState.getInstance().setSelectedPlaylist(playlist);
             if (appController != null) {
                 appController.switchToContent("PlaylistFXML.fxml");
-                PlaylistFXMLController.getInstance().loadFromPlaylist(playlist);
+                PlaylistFXMLController cntrl = PlaylistFXMLController.getInstance();
+                cntrl.loadFromPlaylist(playlist);
+                cntrl.setPlaylistTitle(playlist.getNama());
+
             } else {
                 System.err.println("AppLayoutController instance not found");
             }

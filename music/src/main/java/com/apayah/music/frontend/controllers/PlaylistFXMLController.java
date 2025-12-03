@@ -65,6 +65,8 @@ public class PlaylistFXMLController implements Initializable, AppState.MusicUpda
     @FXML
     private Button addToPlaylistButton;
 
+    @FXML
+    private Label playlistTitle;
     // Radio buttons for playlist selection
     @FXML
     private RadioButton playlist1Radio;
@@ -756,23 +758,9 @@ public class PlaylistFXMLController implements Initializable, AppState.MusicUpda
             });
 
         }
+    }
 
-        // AppState.getInstance().getMusicPlayer().search(query).thenAccept(musics -> {
-        // javafx.application.Platform.runLater(() -> {
-        // ObservableList<SongData> searchResults = FXCollections.observableArrayList();
-        // int index = 1;
-        // for (Music music : musics) {
-        // searchResults.add(new SongData(
-        // index++,
-        // music.getTrack().getInfo().title,
-        // music.getTrack().getInfo().author,
-        // "-", // Album
-        // formatDurationFromMillis(music.getTrack().getDuration()),
-        // null, // Image
-        // music));
-        // }
-        // songTableView.setItems(searchResults);
-        // });
-        // });
+    public void setPlaylistTitle(String title) {
+        this.playlistTitle.setText(title);
     }
 }
