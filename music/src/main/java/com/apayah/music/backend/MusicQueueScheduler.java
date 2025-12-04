@@ -9,6 +9,9 @@ import com.sedmelluq.discord.lavaplayer.track.AudioTrackEndReason;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * A thread-safe scheduler that adapts your MusicQueue to be event-driven.
  * This class fixes the bugs in your original MusicQueue logic.
@@ -17,6 +20,9 @@ public class MusicQueueScheduler extends AudioEventAdapter {
     private final AudioPlayer player;
     private MusicQueue queue;
     private final Object queueLock = new Object(); // Used for synchronization
+
+    private static final Logger log = LoggerFactory.getLogger(MusicQueueScheduler.class);
+
 
     public MusicQueueScheduler(AudioPlayer player, MusicQueue queue) {
         this.player = player;
@@ -35,13 +41,13 @@ public class MusicQueueScheduler extends AudioEventAdapter {
 
     @Override
     public void onTrackException(AudioPlayer player, AudioTrack track, FriendlyException exception) {
-        System.err.println("Track Exception: " + exception.getMessage());
+        log.error("Track Exception: {}" , exception.getMessage());
         exception.printStackTrace();
     }
 
     @Override
     public void onTrackStuck(AudioPlayer player, AudioTrack track, long thresholdMs) {
-        System.err.println("Track Stuck: " + track.getInfo().title);
+        log.warn("Track stuck: {} (threshold {} ms)", track.getInfo().title, thresholdMs);
         nextTrack();
     }
 
@@ -78,8 +84,6 @@ public class MusicQueueScheduler extends AudioEventAdapter {
 
         if (nextMusic != null) {
             // Clone the track to ensure it can be played again if it was played before
-            // AudioTrack trackToPlay = nextMusic.getTrack().makeClone();
-            // player.startTrack(trackToPlay, false);
             player.startTrack(nextMusic.getTrack().makeClone(), false);
             AppState.getInstance().notifyMusicChanged(nextMusic);
         } else {

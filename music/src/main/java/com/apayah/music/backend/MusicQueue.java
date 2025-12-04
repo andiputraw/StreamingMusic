@@ -3,10 +3,6 @@ package com.apayah.music.backend;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ConcurrentLinkedQueue;
-
-import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
-import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 
 public class MusicQueue {
     private List<Music> musics;
@@ -40,7 +36,7 @@ public class MusicQueue {
     }
 
     public boolean isEmpty() {
-        return this.musics.size() == 0;
+        return this.musics.isEmpty();
     }
 
     public int getCurrentIndex() {
@@ -49,7 +45,7 @@ public class MusicQueue {
 
     public Music next() {
         if(isOnEnd()) {
-            new IndexOutOfBoundsException();
+            throw new IndexOutOfBoundsException();
         }
 
         this.pos += 1;
