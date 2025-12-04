@@ -1,8 +1,9 @@
 package com.apayah.music.backend;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+
+import javax.sound.sampled.LineUnavailableException;
 
 import com.apayah.music.command.backend.AddMusicCommand;
 import com.apayah.music.command.backend.ClearQueueCommand;
@@ -21,14 +22,13 @@ public class MusicPlayerFacade {
     private final AudioPlayerManager manager;
     private final AudioPlayer player;
     private final MusicManager musicManager;
-    private final Speaker speaker;
     private final MusicQueue musicQueue;
     private final MusicQueueScheduler scheduler;
-    private final AudioDataFormat audioFormat = StandardAudioDataFormats.COMMON_PCM_S16_BE;
+    private static final AudioDataFormat audioFormat = StandardAudioDataFormats.COMMON_PCM_S16_BE;
     private final MusicPlayerCommandQueue commandQueue;
     private final MusicSearcher searcher;
 
-    public MusicPlayerFacade() throws Exception {
+    public MusicPlayerFacade() throws LineUnavailableException {
         this.manager = new DefaultAudioPlayerManager();
         
         AudioSourceManagers.registerRemoteSources(manager);
@@ -42,7 +42,8 @@ public class MusicPlayerFacade {
         this.musicManager = new MusicManager(player);
         this.scheduler = new MusicQueueScheduler(this.player, this.musicQueue);
         this.player.addListener(scheduler);
-        this.speaker = new Speaker(player, audioFormat);
+        // side effect
+        new Speaker(player, audioFormat);
         this.searcher = new MusicSearcher(this.manager);
         this.commandQueue = new MusicPlayerCommandQueue(musicManager, this.scheduler);
     }
@@ -107,17 +108,8 @@ public class MusicPlayerFacade {
         commandQueue.enqueue(new ClearQueueCommand());
     }
 
-    public static void main(String[] args) throws Exception {
-        System.out.println("Start");
-        var facade = new MusicPlayerFacade();
-        facade.search("https://soundcloud.com/turkeybaconclub/sets/hollow-knight-silksong?utm_source=clipboard&utm_medium=text&utm_campaign=social_sharing").
-        thenAccept(musics -> {
-            System.out.println("Loaded");
-            facade.addToQueue(musics);
-            facade.resume();
-        });
-        System.out.println("ZZZ.....");
-
-        Thread.sleep(99999999);    
+    public Music getCurrentMusic() {
+        return this.playingQueue().get(getIndex());
     }
+
 }

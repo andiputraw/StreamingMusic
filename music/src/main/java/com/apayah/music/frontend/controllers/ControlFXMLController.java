@@ -25,6 +25,7 @@ import javafx.scene.layout.VBox;
 import javafx.util.Duration;
 import com.apayah.music.frontend.AppState;
 import com.apayah.music.backend.Music;
+import com.apayah.music.backend.MusicPlayerFacade;
 
 /**
  * FXML Controller class
@@ -195,6 +196,7 @@ public class ControlFXMLController implements Initializable, AppState.MusicUpdat
         progressSlider.setValue(currentTime);
         updateTimeLabels();
         System.out.println("Previous song");
+        AppState.getInstance().getMusicPlayer().pref();
     }
 
     @FXML
@@ -226,10 +228,13 @@ public class ControlFXMLController implements Initializable, AppState.MusicUpdat
         // Go to next song
         loadNextSong();
         System.out.println("Next song");
+        AppState.getInstance().getMusicPlayer().next();
+        
     }
 
     @FXML
     private void onProgressSliderClicked(MouseEvent event) {
+        MusicPlayerFacade musicPlayer = AppState.getInstance().getMusicPlayer();
         // Calculate new position based on click
         double mouseX = event.getX();
         double sliderWidth = progressSlider.getWidth();
@@ -241,6 +246,7 @@ public class ControlFXMLController implements Initializable, AppState.MusicUpdat
         updateTimeLabels();
 
         System.out.println("Seeked to: " + formatTime(currentTime));
+        musicPlayer.seek((long)currentTime * 1000);
     }
 
     @FXML

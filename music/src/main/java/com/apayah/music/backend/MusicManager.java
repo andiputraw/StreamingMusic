@@ -1,5 +1,4 @@
 package com.apayah.music.backend;
-import javax.sound.sampled.LineUnavailableException;
 
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 
@@ -7,7 +6,7 @@ public class MusicManager {
 
     private AudioPlayer player;
 
-    public MusicManager(AudioPlayer player) throws LineUnavailableException {
+    public MusicManager(AudioPlayer player) {
         this.player = player;
     }
 

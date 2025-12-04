@@ -2,6 +2,7 @@ package com.apayah.music.frontend;
 
 import com.apayah.music.backend.Music;
 import com.apayah.music.backend.MusicPlayerFacade;
+import com.apayah.music.playlist.Playlist;
 
 import javafx.scene.image.Image;
 
@@ -9,6 +10,7 @@ public class AppState {
     private static AppState instance = new AppState();
     private MusicPlayerFacade musicPlayer;
     private Music currentMusic;
+    private Playlist selectedPlaylist;
 
     public AppState() {
         try {
@@ -63,5 +65,9 @@ public class AppState {
 
     public void setCurrentMusic(Music currentMusic) {
         this.currentMusic = currentMusic;
+    }
+
+    public void setSelectedPlaylist(Playlist playlist) {
+        this.selectedPlaylist = playlist;
     }
 }

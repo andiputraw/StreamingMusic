@@ -7,6 +7,7 @@ import java.util.Optional;
 import java.util.ResourceBundle;
 
 import com.apayah.music.backend.Music;
+import com.apayah.music.backend.MusicPlayerFacade;
 import com.apayah.music.frontend.AppState;
 import com.apayah.music.frontend.SongData;
 
@@ -35,6 +36,12 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 
+import com.apayah.music.playlist.Playlist;
+import com.apayah.music.playlist.PlaylistManager;
+import com.sedmelluq.discord.lavaplayer.track.AudioTrackInfo;
+
+import java.util.stream.Collectors;
+
 public class PlaylistFXMLController implements Initializable, AppState.MusicUpdateListener {
 
     @FXML
@@ -58,6 +65,8 @@ public class PlaylistFXMLController implements Initializable, AppState.MusicUpda
     @FXML
     private Button addToPlaylistButton;
 
+    @FXML
+    private Label playlistTitle;
     // Radio buttons for playlist selection
     @FXML
     private RadioButton playlist1Radio;
@@ -235,49 +244,46 @@ public class PlaylistFXMLController implements Initializable, AppState.MusicUpda
      */
     @FXML
     private void showAddToPlaylistModal(ActionEvent event) {
-        // if (modalOverlay != null) {
-        // modalOverlay.setVisible(true);
-        // modalOverlay.setManaged(true);
-        // modalOverlay.toFront();
+        List<String> playlistNames = PlaylistManager.getInstance().getSemuaPlaylist().stream()
+                .map(p -> p.getNama()).toList();
 
-        // // Clear any previous selection
-        // if (playlistToggleGroup != null) {
-        // playlistToggleGroup.selectToggle(null);
-        // }
-        // }
-        try {
-
-            openPlaylistModal();
-        } catch (Exception e) {
-            // TODO: handle exception
-            e.printStackTrace();
+        if (playlistNames.isEmpty()) {
+            showErrorMessage("No playlists available. Create a playlist first.");
+            return;
         }
+
+        ChoiceDialog<String> dialog = new ChoiceDialog<>(playlistNames.get(0), playlistNames);
+        dialog.setTitle("Add to Playlist");
+        dialog.setHeaderText("Select a playlist to add the song to.");
+        dialog.setContentText("Playlist:");
+
+        Optional<String> result = dialog.showAndWait();
+        result.ifPresent(playlistName -> {
+            String songName = "";
+            if (selectedSongForModal != null) {
+                songName = selectedSongForModal.getSongTitle() + " - " +
+                        selectedSongForModal.getAlbum();
+            } else {
+                SongData selectedSong = getSelectedSong();
+                if (selectedSong != null) {
+                    songName = selectedSong.getSongTitle() + " - " + selectedSong.getAlbum();
+                } else {
+                    songName = "Unknown Song";
+                }
+            }
+            System.out.println("Added '" + songName + "' to playlist: " + playlistName);
+            showSuccessMessage("'" + (selectedSongForModal != null ? selectedSongForModal.getSongTitle() : "Song") +
+                    "' added to " + playlistName + " successfully!");
+            PlaylistManager.getInstance().tambahLaguKePlaylist(playlistName, songName,
+                    selectedSongForModal.getMusic().getTrack().getInfo().uri);
+            selectedSongForModal = null;
+        });
     }
 
     @FXML
     private void openPlaylistModal() throws IOException {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/PlaylistModal.fxml"));
-        Parent root = loader.load();
-
-        PlaylistModalController controller = loader.getController();
-
-        Stage modal = new Stage();
-        modal.initModality(Modality.APPLICATION_MODAL);
-        modal.setTitle("Choose Playlist");
-
-        modal.setScene(new Scene(root));
-        controller.setStage(modal);
-
-        // Example playlists:
-        controller.setPlaylists(List.of("Rock", "Jazz", "Chill", "EDM"));
-
-        modal.showAndWait();
-
-        List<String> selected = controller.getSelectedPlaylists();
-        if (!selected.isEmpty()) {
-            System.out.println("User chose: " + selected);
-        }
-
+        // This method is no longer used, but we keep it to avoid breaking other parts
+        // of the code for now.
     }
 
     /**
@@ -380,6 +386,22 @@ public class PlaylistFXMLController implements Initializable, AppState.MusicUpda
      */
     public void setParentController(MainLayoutController parentController) {
         this.parentController = parentController;
+    }
+
+    @FXML
+    public void onPlayPlaylistButtonClick() {
+        var musicPlayerFacade = AppState.getInstance().getMusicPlayer();
+        musicPlayerFacade.pause();
+        musicPlayerFacade.clearQueue();
+        ObservableList<SongData> allSongs = songTableView.getItems();
+        for (SongData song : allSongs) {
+            if (song.getMusic() != null) {
+                musicPlayerFacade.addToQueue(song.getMusic());
+            }
+        }
+        musicPlayerFacade.jump(0);
+        musicPlayerFacade.resume();
+        
     }
 
     /**
@@ -707,5 +729,38 @@ public class PlaylistFXMLController implements Initializable, AppState.MusicUpda
                 songTableView.setItems(searchResults);
             });
         });
+    }
+
+    public void loadFromPlaylist(Playlist playlist) {
+        System.err.println(playlist.getNama());
+        MusicPlayerFacade musicPlayer = AppState.getInstance().getMusicPlayer();
+        List<String> links = playlist.getDaftarLinkLagu();
+        ObservableList<SongData> searchResults = FXCollections.observableArrayList();
+        for (int i = 0; i < links.size(); i++) {
+            int index = i;
+            System.err.println("Searching " + links.get(index));
+
+            musicPlayer.search(links.get(index)).thenAccept(musics -> {
+                System.err.println("Loaded " + musics.size());
+                javafx.application.Platform.runLater(() -> {
+                    if (musics.size() > 0) {
+                        Music m = musics.get(0);
+                        AudioTrackInfo info = m.getTrack().getInfo();
+                        searchResults.add(new SongData(
+                                index,
+                                info.title,
+                                info.author,
+                                "-",
+                                formatDurationFromMillis(m.getTrack().getDuration()), new Image(info.artworkUrl), m));
+                        songTableView.setItems(searchResults);
+                    }
+                });
+            });
+
+        }
+    }
+
+    public void setPlaylistTitle(String title) {
+        this.playlistTitle.setText(title);
     }
 }

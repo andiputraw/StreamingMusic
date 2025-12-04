@@ -25,9 +25,7 @@ public class MusicSearcher {
             CompletableFuture<List<Music>> promise = new CompletableFuture<>();
 
             manager.loadItem(query, new FunctionalResultHandler(
-                    track -> {
-                        promise.complete(List.of(new Music(track)));
-                    },
+                    track -> promise.complete(List.of(new Music(track))),
                     playlist -> {
                         List<Music> loadedTitles = new ArrayList<>();
                         for (AudioTrack track : playlist.getTracks()) {
@@ -36,10 +34,9 @@ public class MusicSearcher {
                         // We loaded a playlist, return all titles
                         promise.complete(loadedTitles);
                     },
-                    () -> {
-                        promise.complete(List.of());
-                    }, // No matches
-                    e -> promise.completeExceptionally(e) // Error
+                    () -> promise.complete(List.of()),
+                    // No matches
+                    promise::completeExceptionally // Error
             ));
 
             return promise.join();

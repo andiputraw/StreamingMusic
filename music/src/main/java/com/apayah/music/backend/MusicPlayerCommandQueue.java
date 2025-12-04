@@ -17,7 +17,7 @@ public class MusicPlayerCommandQueue {
     private final MusicQueueScheduler musicQueue;
 
     public MusicPlayerCommandQueue(MusicManager manager, MusicQueueScheduler musicQueue) {
-        this.queue = new ArrayBlockingQueue<Command>(1024);
+        this.queue = new ArrayBlockingQueue<>(1024);
         this.manager = manager;
         this.musicQueue = musicQueue;
         startMessageLoop();
@@ -34,29 +34,45 @@ public class MusicPlayerCommandQueue {
             while (true) {
                 try {
                     Command event = queue.take();
-                    if(event instanceof AddMusicCommand) {
-                        musicQueue.queue(((AddMusicCommand)event).getMusic());
-                    }
-                    if(event instanceof ResumeMusicCommand) {
-                        manager.resume();
-                    }
-                    if(event instanceof PauseMusicCommand) {
-                        manager.pause();
-                    }
-                    if(event instanceof JumpMusicCommand) {
-                        musicQueue.jump(((JumpMusicCommand)event).getIndex());
-                    }
-                    if(event instanceof SeekMusicCommand) {
-                        manager.seek(((SeekMusicCommand)event).getMilis());
-                    }
-                    if(event instanceof ClearQueueCommand) {
-                        musicQueue.clear();
-                    }
+                   handleEvent(event);
 
                 } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
                     break;
                 }
             }
         }).start();
     }
+
+    private void handleEvent(Command event) {
+
+    if (event instanceof AddMusicCommand add) {
+        musicQueue.queue(add.getMusic());
+        return;
+    }
+
+    if (event instanceof ResumeMusicCommand) {
+        manager.resume();
+        return;
+    }
+
+    if (event instanceof PauseMusicCommand) {
+        manager.pause();
+        return;
+    }
+
+    if (event instanceof JumpMusicCommand jump) {
+        musicQueue.jump(jump.getIndex());
+        return;
+    }
+
+    if (event instanceof SeekMusicCommand seek) {
+        manager.seek(seek.getMilis());
+        return;
+    }
+
+    if (event instanceof ClearQueueCommand) {
+        musicQueue.clear();
+    }
+}
 }

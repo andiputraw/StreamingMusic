@@ -30,6 +30,9 @@ public class Playlist implements Serializable {
     public List<String> getDaftarLagu() {
         return daftarLagu;
     }
+    public List<String> getDaftarLinkLagu() {
+        return daftarLagu.stream().map((v) -> this.getLink(v)).toList();
+    }
 
     public String getJudul(String data){
         String[] parts = data.split("\\|");

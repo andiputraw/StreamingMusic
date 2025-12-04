@@ -1,99 +1,93 @@
 package com.apayah.music.playlist;
 
-import java.io.*;
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+
+/**
+ * Karena hanya ada 1 PlaylistManager.
+ */
+@SuppressWarnings("java:S6548")
 public class PlaylistManager {
 
-    private Map<String, Playlist> semuaPlaylist;
-    private final String filePath = "playlists.dat";
+    private static PlaylistManager instance;
+    private final ObservableList<Playlist> semuaPlaylist;
+    private PlaylistStorage storage; // Depend on the interface
 
-    public PlaylistManager() {
-        semuaPlaylist = new HashMap<>();
-        loadDariFile();
+    private static final Logger log = LoggerFactory.getLogger(PlaylistManager.class);
+
+
+    private PlaylistManager() {
+        // Default to file-based storage
+        this.storage = new FilePlaylistStorage();
+        semuaPlaylist = FXCollections.observableArrayList();
+        // Load initial data
+        loadPlaylists();
+    }
+
+    public static synchronized PlaylistManager getInstance() {
+        if (instance == null) {
+            instance = new PlaylistManager();
+        }
+        return instance;
+    }
+
+    /**
+     * Injects a storage mechanism, primarily for testing purposes.
+     * @param storage The PlaylistStorage implementation to use.
+     */
+    public void setStorage(PlaylistStorage storage) {
+        this.storage = storage;
+    }
+
+    /**
+     * Clears all playlists and reloads them from the configured storage.
+     */
+    public void loadPlaylists() {
+        List<Playlist> loaded = storage.load();
+        semuaPlaylist.setAll(loaded);
+        log.info("PlaylistManager loaded {} playlists from storage.", loaded.size());
     }
 
     public void buatPlaylist(String namaPlaylist) {
-        if (!semuaPlaylist.containsKey(namaPlaylist)) {
-            semuaPlaylist.put(namaPlaylist, new Playlist(namaPlaylist));
-            simpanKeFile();
+        // Check if a playlist with the same name already exists
+        if (semuaPlaylist.stream().noneMatch(p -> p.getNama().equals(namaPlaylist))) {
+            semuaPlaylist.add(new Playlist(namaPlaylist));
+            storage.save(new ArrayList<>(semuaPlaylist));
         }
     }
 
     public void hapusPlaylist(String namaPlaylist) {
-        semuaPlaylist.remove(namaPlaylist);
-        simpanKeFile();
+        semuaPlaylist.removeIf(p -> p.getNama().equals(namaPlaylist));
+        storage.save(new ArrayList<>(semuaPlaylist));
     }
 
     public void tambahLaguKePlaylist(String namaPlaylist, String judul, String link) {
-        Playlist p = semuaPlaylist.get(namaPlaylist);
-        if (p != null) {
-            p.tambahLagu(judul, link);
-            simpanKeFile();
+        for (Playlist p : semuaPlaylist) {
+            if (p.getNama().equals(namaPlaylist)) {
+                p.tambahLagu(judul, link);
+                storage.save(new ArrayList<>(semuaPlaylist));
+                break;
+            }
         }
     }
 
-    // Lihat semua playlist
-    public Map<String, Playlist> getSemuaPlaylist() {
+    public ObservableList<Playlist> getSemuaPlaylist() {
         return semuaPlaylist;
     }
 
-    // Ambil playlist
     public Playlist getPlaylist(String namaPlaylist) {
-        return semuaPlaylist.get(namaPlaylist);
-    }
-
-    // =============== FILE HANDLING ===============
-
-    public void simpanKeFile() {
-        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(filePath))) {
-            oos.writeObject(semuaPlaylist);
-            System.out.println("Playlist berhasil disimpan!");
-        } catch (IOException e) {
-            e.printStackTrace();
+        for (Playlist p : semuaPlaylist) {
+            if (p.getNama().equals(namaPlaylist)) {
+                return p;
+            }
         }
-    }
-
-    @SuppressWarnings("unchecked")
-    public void loadDariFile() {
-        File file = new File(filePath);
-        if (!file.exists()) {
-            System.out.println("Belum ada file playlist, membuat baru...");
-            return;
-        }
-
-        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(filePath))) {
-            semuaPlaylist = (Map<String, Playlist>) ois.readObject();
-            System.out.println("Playlist berhasil dimuat dari file!");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    public static void main(String[] args){
-        // PlaylistManager manager = new PlaylistManager();
-        // manager.buatPlaylist("AndiBesar");
-        // manager.buatPlaylist("NazwaKecil");
-        // manager.tambahLaguKePlaylist("AndiBesar", "Small Fragile Hearts");
-        // manager.tambahLaguKePlaylist("AndiBesar", "Baby");
-        // manager.tambahLaguKePlaylist("NazwaKecil", "Small Fragile Hearts");
-        // manager.simpanKeFile();
-
-        // PlaylistManager manager = new PlaylistManager();
-        // manager.buatPlaylist("AndiBesar");
-        // manager.tambahLaguKePlaylist("AndiBesar", "Small Fragile Hearts", "https://soundcloud.com/victorlundbergofficial/small-fragile-hearts");
-
-        PlaylistManager manager = new PlaylistManager();
-        Playlist percobaan = manager.getPlaylist("AndiBesar");
-
-        System.out.println("=== PLAYLIST " + percobaan.getNama() + " ===");
-
-        for (String item : percobaan.getDaftarLagu()) {
-            System.out.println("- Judul: " + percobaan.getJudul(item));
-            System.out.println("  Link : " + percobaan.getLink(item));
-        }
-
+        return null;
     }
 }
