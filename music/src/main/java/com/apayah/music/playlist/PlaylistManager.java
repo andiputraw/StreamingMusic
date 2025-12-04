@@ -1,6 +1,5 @@
 package com.apayah.music.playlist;
 
-import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,15 +17,18 @@ import javafx.collections.ObservableList;
 public class PlaylistManager {
 
     private static PlaylistManager instance;
-    private ObservableList<Playlist> semuaPlaylist;
-    private static final String FILE_PATH = "playlists.dat";
+    private final ObservableList<Playlist> semuaPlaylist;
+    private PlaylistStorage storage; // Depend on the interface
 
     private static final Logger log = LoggerFactory.getLogger(PlaylistManager.class);
 
 
     private PlaylistManager() {
+        // Default to file-based storage
+        this.storage = new FilePlaylistStorage();
         semuaPlaylist = FXCollections.observableArrayList();
-        loadDariFile();
+        // Load initial data
+        loadPlaylists();
     }
 
     public static synchronized PlaylistManager getInstance() {
@@ -36,24 +38,41 @@ public class PlaylistManager {
         return instance;
     }
 
+    /**
+     * Injects a storage mechanism, primarily for testing purposes.
+     * @param storage The PlaylistStorage implementation to use.
+     */
+    public void setStorage(PlaylistStorage storage) {
+        this.storage = storage;
+    }
+
+    /**
+     * Clears all playlists and reloads them from the configured storage.
+     */
+    public void loadPlaylists() {
+        List<Playlist> loaded = storage.load();
+        semuaPlaylist.setAll(loaded);
+        log.info("PlaylistManager loaded {} playlists from storage.", loaded.size());
+    }
+
     public void buatPlaylist(String namaPlaylist) {
         // Check if a playlist with the same name already exists
         if (semuaPlaylist.stream().noneMatch(p -> p.getNama().equals(namaPlaylist))) {
             semuaPlaylist.add(new Playlist(namaPlaylist));
-            simpanKeFile();
+            storage.save(new ArrayList<>(semuaPlaylist));
         }
     }
 
     public void hapusPlaylist(String namaPlaylist) {
         semuaPlaylist.removeIf(p -> p.getNama().equals(namaPlaylist));
-        simpanKeFile();
+        storage.save(new ArrayList<>(semuaPlaylist));
     }
 
     public void tambahLaguKePlaylist(String namaPlaylist, String judul, String link) {
         for (Playlist p : semuaPlaylist) {
             if (p.getNama().equals(namaPlaylist)) {
                 p.tambahLagu(judul, link);
-                simpanKeFile();
+                storage.save(new ArrayList<>(semuaPlaylist));
                 break;
             }
         }
@@ -70,30 +89,5 @@ public class PlaylistManager {
             }
         }
         return null;
-    }
-
-    public void simpanKeFile() {
-        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(FILE_PATH))) {
-            oos.writeObject(new ArrayList<>(semuaPlaylist));
-            log.info("Playlist berhasil disimpan!");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    @SuppressWarnings("unchecked")
-    public void loadDariFile() {
-        File file = new File(FILE_PATH);
-        if (!file.exists()) {
-            return;
-        }
-
-        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(FILE_PATH))) {
-            List<Playlist> loadedPlaylists = (List<Playlist>) ois.readObject();
-            semuaPlaylist.setAll(loadedPlaylists);
-            log.info("Playlist berhasil dimuat dari file!");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 }
