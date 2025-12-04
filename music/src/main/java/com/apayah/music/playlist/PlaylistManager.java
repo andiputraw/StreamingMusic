@@ -11,6 +11,11 @@ import org.slf4j.LoggerFactory;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
+/**
+ * Singleton by design.
+ * There must be exactly one playlist manager for the entire application.
+ */
+@SuppressWarnings("java:S6548")
 public class PlaylistManager {
 
     private ObservableList<Playlist> semuaPlaylist;
