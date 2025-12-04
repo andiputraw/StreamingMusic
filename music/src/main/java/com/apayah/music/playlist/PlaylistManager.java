@@ -12,8 +12,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
 /**
- * Singleton by design.
- * There must be exactly one playlist manager for the entire application.
+ * Karena hanya ada 1 PlaylistManager.
  */
 @SuppressWarnings("java:S6548")
 public class PlaylistManager {
