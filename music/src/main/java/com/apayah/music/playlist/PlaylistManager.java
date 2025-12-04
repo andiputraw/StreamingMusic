@@ -3,26 +3,34 @@ package com.apayah.music.playlist;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
 public class PlaylistManager {
 
-    private static PlaylistManager instance;
     private ObservableList<Playlist> semuaPlaylist;
-    private final String filePath = "playlists.dat";
+    private static final String FILE_PATH = "playlists.dat";
+
+    private static final Logger log = LoggerFactory.getLogger(PlaylistManager.class);
+
+      private static class Holder {
+        private static final PlaylistManager INSTANCE = new PlaylistManager();
+    }
+
+    public static PlaylistManager getInstance() {
+        return Holder.INSTANCE;
+    }
 
     private PlaylistManager() {
         semuaPlaylist = FXCollections.observableArrayList();
         loadDariFile();
     }
 
-    public static synchronized PlaylistManager getInstance() {
-        if (instance == null) {
-            instance = new PlaylistManager();
-        }
-        return instance;
-    }
 
     public void buatPlaylist(String namaPlaylist) {
         // Check if a playlist with the same name already exists
@@ -61,9 +69,9 @@ public class PlaylistManager {
     }
 
     public void simpanKeFile() {
-        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(filePath))) {
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(FILE_PATH))) {
             oos.writeObject(new ArrayList<>(semuaPlaylist));
-            System.out.println("Playlist berhasil disimpan!");
+            log.info("Playlist berhasil disimpan!");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -71,15 +79,15 @@ public class PlaylistManager {
 
     @SuppressWarnings("unchecked")
     public void loadDariFile() {
-        File file = new File(filePath);
+        File file = new File(FILE_PATH);
         if (!file.exists()) {
             return;
         }
 
-        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(filePath))) {
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(FILE_PATH))) {
             List<Playlist> loadedPlaylists = (List<Playlist>) ois.readObject();
             semuaPlaylist.setAll(loadedPlaylists);
-            System.out.println("Playlist berhasil dimuat dari file!");
+            log.info("Playlist berhasil dimuat dari file!");
         } catch (Exception e) {
             e.printStackTrace();
         }
