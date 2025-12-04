@@ -17,24 +17,24 @@ import javafx.collections.ObservableList;
 @SuppressWarnings("java:S6548")
 public class PlaylistManager {
 
+    private static PlaylistManager instance;
     private ObservableList<Playlist> semuaPlaylist;
     private static final String FILE_PATH = "playlists.dat";
 
     private static final Logger log = LoggerFactory.getLogger(PlaylistManager.class);
 
-      private static class Holder {
-        private static final PlaylistManager INSTANCE = new PlaylistManager();
-    }
-
-    public static PlaylistManager getInstance() {
-        return Holder.INSTANCE;
-    }
 
     private PlaylistManager() {
         semuaPlaylist = FXCollections.observableArrayList();
         loadDariFile();
     }
 
+    public static synchronized PlaylistManager getInstance() {
+        if (instance == null) {
+            instance = new PlaylistManager();
+        }
+        return instance;
+    }
 
     public void buatPlaylist(String namaPlaylist) {
         // Check if a playlist with the same name already exists
