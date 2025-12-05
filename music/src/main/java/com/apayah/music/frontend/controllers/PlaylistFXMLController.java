@@ -35,7 +35,7 @@ import com.sedmelluq.discord.lavaplayer.track.AudioTrackInfo;
 public class PlaylistFXMLController implements Initializable, AppState.MusicUpdateListener {
 
     private static final String UNKNOWN_SONG = "Unknown Song";
-    
+
     // Singleton instance - will be set when FXML instantiates this controller
     private static PlaylistFXMLController instance;
 
@@ -93,7 +93,11 @@ public class PlaylistFXMLController implements Initializable, AppState.MusicUpda
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         // Capture this instance for singleton access
-        PlaylistFXMLController.instance = this;
+        synchronized (PlaylistFXMLController.class) {
+            if (instance == null) {
+                instance = this;
+            }
+        }
 
         // Register as music update listener
         AppState.getInstance().addMusicUpdateListener(this);

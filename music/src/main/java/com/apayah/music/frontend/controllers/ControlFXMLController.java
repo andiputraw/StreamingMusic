@@ -75,7 +75,11 @@ public class ControlFXMLController implements Initializable, AppState.MusicUpdat
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         // Capture this instance for singleton access
-        instance = this;
+        synchronized (ControlFXMLController.class) {
+            if (instance == null) {
+                instance = this;
+            }
+        }
 
         // Register as music update listener
         AppState.getInstance().addMusicUpdateListener(this);
