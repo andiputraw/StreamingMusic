@@ -85,31 +85,8 @@
                      </graphic>
                   </Button>
                   
-                  <!-- Queue Button -->
-                  <Button fx:id="queueButton" mnemonicParsing="false" onAction="#onQueueAction" prefHeight="30.0" prefWidth="35.0" styleClass="control-button-queue">
-                     <graphic>
-                        <ImageView fitHeight="18.0" fitWidth="18.0">
-                           <image>
-                              <Image url="@../image/queue.png" />
-                           </image>
-                        </ImageView>
-                     </graphic>
-                  </Button>
                </children></HBox>
             
-            <!-- Shuffle Button -->
-            <Button fx:id="shuffleButton" mnemonicParsing="false" onAction="#onShuffleAction" prefHeight="25.0" prefWidth="25.0" styleClass="control-button-shuffle">
-               <graphic>
-                  <ImageView fitHeight="14.0" fitWidth="14.0">
-                     <image>
-                        <Image url="@../image/queue.png" />
-                     </image>
-                  </ImageView>
-               </graphic>
-               <HBox.margin>
-                  <Insets right="20.0" />
-               </HBox.margin>
-            </Button>
          </children>
       </HBox>
       

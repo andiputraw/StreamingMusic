@@ -77,25 +77,16 @@
                </columnResizePolicy>
                <columns>
                   <!-- Column for Number -->
-                  <TableColumn prefWidth="40.0" text="#">
-                     <cellValueFactory>
-                        <PropertyValueFactory property="number" />
-                     </cellValueFactory>
-                  </TableColumn>
 
                   <!-- Column for Title with Image and Text -->
-                  <TableColumn prefWidth="650.0" text="Title">
+                  <TableColumn prefWidth="400.0" text="Title">
                      <cellValueFactory>
                         <PropertyValueFactory property="title" />
                      </cellValueFactory>
                   </TableColumn>
 
                   <!-- Column for Album -->
-                  <TableColumn prefWidth="200.0" text="Album">
-                     <cellValueFactory>
-                        <PropertyValueFactory property="album" />
-                     </cellValueFactory>
-                  </TableColumn>
+                  
                   
                   <!-- Column for Duration -->
                   <TableColumn prefWidth="80.0" text="⏱">
