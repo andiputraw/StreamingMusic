@@ -2,6 +2,8 @@ package com.apayah.music.frontend.controllers;
 
 import java.net.URL;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -10,6 +12,8 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 
 public class HeaderFXMLController implements Initializable {
+
+    private static final Logger LOGGER = Logger.getLogger(HeaderFXMLController.class.getName());
 
     @FXML
     private Button homeButton;
@@ -25,14 +29,13 @@ public class HeaderFXMLController implements Initializable {
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        System.out.println("HeaderFXMLController initialized successfully");
+        LOGGER.info(() -> "HeaderFXMLController initialized successfully");
 
         // Add listener for search field
         if (searchField != null) {
-            searchField.textProperty().addListener((observable, oldValue, newValue) -> {
-                // Here you can implement search logic when the text is changed
-                System.out.println("Search query: " + newValue);
-            });
+            searchField.textProperty().addListener((observable, oldValue, newValue) ->
+                LOGGER.fine(() -> "Search query: " + newValue)
+            );
         }
     }
 
@@ -46,13 +49,12 @@ public class HeaderFXMLController implements Initializable {
             AppLayoutController appController = AppLayoutController.getInstance();
             if (appController != null) {
                 appController.loadMainContent(); // This loads FXMLDocument.fxml
-                System.out.println("Navigated to main page (FXMLDocument.fxml)");
+                LOGGER.info(() -> "Navigated to main page (FXMLDocument.fxml)");
             } else {
-                System.err.println("AppLayoutController instance not found");
+                LOGGER.severe(() -> "AppLayoutController instance not found");
             }
         } catch (Exception e) {
-            e.printStackTrace();
-            System.err.println("Error navigating to main page: " + e.getMessage());
+            LOGGER.log(Level.SEVERE, "Error navigating to main page", e);
         }
     }
 
@@ -63,22 +65,21 @@ public class HeaderFXMLController implements Initializable {
     private void onSearchAction(ActionEvent event) {
         if (searchField != null) {
             String searchText = searchField.getText();
-            System.out.println("Search for: " + searchText);
-            // TODO: Implement search functionality
+            LOGGER.info(() -> "Search for: " + searchText);
         }
     }
 
     @FXML
     private void onSearchButtonClick(ActionEvent event) {
         String query = searchField.getText();
-        System.out.println("Search button clicked, query: " + query);
-        
+        LOGGER.info(() -> "Search button clicked, query: " + query);
+
         if (query != null && !query.trim().isEmpty()) {
             AppLayoutController appController = AppLayoutController.getInstance();
             if (appController != null) {
                 appController.loadSearchContent(query);
             } else {
-                System.err.println("AppLayoutController instance not found");
+                LOGGER.severe(() -> "AppLayoutController instance not found");
             }
         }
     }

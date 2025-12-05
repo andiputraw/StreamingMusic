@@ -244,10 +244,10 @@
 }
 
 .slider-button {
-    -fx-background-color: #9656ce; /* Warna tombol */
+    -fx-background-color: #9656ce; 
     -fx-text-fill: white;
     -fx-font-size: 18px;
-    -fx-border-radius: 50%; /* Membuat tombol bulat */
+    -fx-border-radius: 50%;
     -fx-background-radius: 50%;
     -fx-padding: 5px;
     -fx-min-width: 30px;

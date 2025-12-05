@@ -4,19 +4,15 @@ import com.apayah.music.backend.Music;
 import com.apayah.music.backend.MusicPlayerFacade;
 import com.apayah.music.playlist.Playlist;
 
-import javafx.scene.image.Image;
-
 public class AppState {
     private static AppState instance = new AppState();
     private MusicPlayerFacade musicPlayer;
     private Music currentMusic;
-    private Playlist selectedPlaylist;
 
     public AppState() {
         try {
             this.musicPlayer = new MusicPlayerFacade();
         } catch (Exception e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
     }
@@ -68,6 +64,6 @@ public class AppState {
     }
 
     public void setSelectedPlaylist(Playlist playlist) {
-        this.selectedPlaylist = playlist;
+        // Implementation for setting the selected playlist
     }
 }

@@ -4,8 +4,6 @@
  */
 package com.apayah.music.frontend;
 
-import com.apayah.music.backend.MusicPlayerFacade;
-
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -37,14 +35,7 @@ public class JavaFXApplication1 extends Application {
 
         stage.setTitle("Music Player Application - Fullscreen");
         stage.setScene(scene);
-
-        // Set fullscreen and maximize window
-        // stage.setMaximized(true);
-        // stage.setMaxWidth(1280);
-        // stage.setMinHeight(900);
-        // stage.setMaxHeight(900);
-        // stage.setResizable(false);
-        stage.setFullScreen(false); // Set to true for true fullscreen
+        stage.setFullScreen(false); 
 
         stage.show();
     }

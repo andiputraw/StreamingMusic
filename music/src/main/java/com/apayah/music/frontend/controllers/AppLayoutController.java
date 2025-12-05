@@ -14,33 +14,36 @@ import javafx.scene.layout.StackPane;
  */
 public class AppLayoutController implements Initializable {
 
+    // Singleton instance - will be set when FXML instantiates this controller
+    private static AppLayoutController instance = null;
+
     @FXML
     private StackPane contentArea;
 
     // Reference to music control controller for easy access
     private ControlFXMLController musicControlController;
 
-    private static AppLayoutController instance;
-
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        instance = this;
+        // Capture this instance for singleton access
+        synchronized (AppLayoutController.class) {
+            if (instance == null) {
+                instance = this;
+            }
+        }
 
         // Wait a bit for ControlFXMLController to be initialized
         javafx.application.Platform.runLater(() -> {
             musicControlController = ControlFXMLController.getInstance();
-            System.out.println("AppLayoutController: Got music control controller: " + musicControlController);
 
             // Test music control update
             if (musicControlController != null) {
-                System.out.println("AppLayoutController: Testing music control update...");
                 musicControlController.updateSongInfo("Test Song", "Test Artist", "", 180.0);
             }
         });
 
         // Load default content (main page)
         loadMainContent();
-        System.out.println("AppLayoutController initialized successfully");
     }
 
     /**
@@ -57,6 +60,7 @@ public class AppLayoutController implements Initializable {
         loadContent("/fxml/FXMLDocument.fxml");
     }
 
+
     /**
      * Load playlist content (PlaylistFXML)
      */
@@ -68,10 +72,13 @@ public class AppLayoutController implements Initializable {
      * Load playlist content with search query
      */
     public void loadSearchContent(String query) {
+        if (contentArea == null) {
+            return; // contentArea not yet initialized
+        }
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/PlaylistFXML.fxml"));
             Node content = loader.load();
-            
+
             PlaylistFXMLController controller = loader.getController();
             if (controller != null) {
                 controller.performSearch(query);
@@ -81,10 +88,7 @@ public class AppLayoutController implements Initializable {
             contentArea.getChildren().clear();
             contentArea.getChildren().add(content);
 
-            System.out.println("Successfully loaded search results in PlaylistFXML");
-
         } catch (IOException e) {
-            System.err.println("Error loading search content: " + e.getMessage());
             e.printStackTrace();
         }
     }
@@ -93,6 +97,9 @@ public class AppLayoutController implements Initializable {
      * Generic method to load any FXML content
      */
     private void loadContent(String fxmlPath) {
+        if (contentArea == null) {
+            return; // contentArea not yet initialized
+        }
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
             Node content = loader.load();
@@ -101,10 +108,7 @@ public class AppLayoutController implements Initializable {
             contentArea.getChildren().clear();
             contentArea.getChildren().add(content);
 
-            System.out.println("Successfully loaded: " + fxmlPath);
-
         } catch (IOException e) {
-            System.err.println("Error loading content from " + fxmlPath + ": " + e.getMessage());
             e.printStackTrace();
         }
     }
@@ -132,11 +136,8 @@ public class AppLayoutController implements Initializable {
     public void updateMusicControl(String title, String artist, String albumCover, double durationInSeconds) {
         ControlFXMLController controller = getMusicControlController();
         if (controller != null) {
-            System.out.println("AppLayoutController: Updating music control - " + title + " by " + artist);
             controller.updateSongInfo(title, artist, albumCover, durationInSeconds);
             controller.startPlayback();
-        } else {
-            System.out.println("AppLayoutController: Music control controller not available yet");
         }
     }
 }

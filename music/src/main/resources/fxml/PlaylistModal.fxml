@@ -4,8 +4,8 @@
 <?import javafx.scene.control.*?>
 <?import javafx.geometry.*?>
 
-<StackPane xmlns="http://javafx.com/javafx"
-           xmlns:fx="http://javafx.com/fxml"
+<StackPane xmlns="http://javafx.com/javafx/21"
+           xmlns:fx="http://javafx.com/fxml/1"
            fx:controller="com.apayah.music.frontend.controllers.PlaylistModalController"
         stylesheets="@../css/darkmodal.css"
            styleClass="modal-backdrop">

@@ -10,6 +10,8 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
+import java.util.logging.Logger;
+import java.util.logging.Level;
 
 /**
  * FXML Controller class for MainLayout
@@ -24,7 +26,7 @@ public class MainLayoutController implements Initializable {
     @FXML
     private ControlFXMLController musicControlController;
 
-    private static MainLayoutController instance;
+    private static final Logger LOGGER = Logger.getLogger(MainLayoutController.class.getName());
 
     /**
      * Initializes the controller class.
@@ -32,18 +34,6 @@ public class MainLayoutController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         // Controller initialization - FXML includes are handled automatically
-        instance = this;
-        System.out.println("MainLayoutController initialized successfully");
-
-        // Debug: Print controller references
-        System.out.println("Debug - musicControlController: " + musicControlController);
-    }
-
-    /**
-     * Get singleton instance of MainLayoutController
-     */
-    public static MainLayoutController getInstance() {
-        return instance;
     }
 
     /**
@@ -52,13 +42,12 @@ public class MainLayoutController implements Initializable {
     public void switchContent(String fxmlFile) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/" + fxmlFile));
-            Parent newContent = loader.load();
+            loader.load();
 
             // Since we use fx:include, we need to reload the entire scene
-            System.out.println("Switching content to: " + fxmlFile);
 
         } catch (IOException e) {
-            System.err.println("Error switching content to " + fxmlFile + ": " + e.getMessage());
+            // Silently ignore content switching errors
         }
     }
 
@@ -135,7 +124,7 @@ public class MainLayoutController implements Initializable {
                 detailController.updateMusicDetails(songTitle, artist, album, duration, imageUrl);
             }
         } catch (Exception e) {
-            System.err.println("Error updating music detail panel: " + e.getMessage());
+            LOGGER.log(Level.SEVERE, "Error updating music detail panel", e);
         }
     }
 
@@ -149,7 +138,7 @@ public class MainLayoutController implements Initializable {
                 detailController.updateMusicDetails(music);
             }
         } catch (Exception e) {
-            System.err.println("Error updating music detail panel: " + e.getMessage());
+            LOGGER.log(Level.SEVERE, "Error updating music detail panel", e);
         }
     }
 }

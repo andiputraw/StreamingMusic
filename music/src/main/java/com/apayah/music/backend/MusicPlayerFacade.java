@@ -30,11 +30,11 @@ public class MusicPlayerFacade {
 
     public MusicPlayerFacade() throws LineUnavailableException {
         this.manager = new DefaultAudioPlayerManager();
-        
+
         AudioSourceManagers.registerRemoteSources(manager);
         manager.getConfiguration().setOutputFormat(audioFormat);
         this.musicQueue = new MusicQueue();
-        
+
         this.player = manager.createPlayer();
         this.player.setVolume(100); // Ensure volume is up
         this.player.setPaused(true);
@@ -70,14 +70,14 @@ public class MusicPlayerFacade {
     }
 
     public void next() {
-        if(!musicQueue.isOnEnd()) {
-            commandQueue.enqueue( new JumpMusicCommand(this.getIndex() + 1) );
+        if (!musicQueue.isOnEnd()) {
+            commandQueue.enqueue(new JumpMusicCommand(this.getIndex() + 1));
         }
     }
 
     public void pref() {
-        if(!musicQueue.isOnStart()) {
-            commandQueue.enqueue( new JumpMusicCommand(this.getIndex() - 1) );
+        if (!musicQueue.isOnStart()) {
+            commandQueue.enqueue(new JumpMusicCommand(this.getIndex() - 1));
         }
     }
 
@@ -88,7 +88,6 @@ public class MusicPlayerFacade {
     public void addToQueue(Music music) {
         commandQueue.enqueue(new AddMusicCommand(music));
     }
-
 
     public void addToQueue(List<Music> musics) {
         for (Music music : musics) {

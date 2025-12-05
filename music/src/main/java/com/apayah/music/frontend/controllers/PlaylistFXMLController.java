@@ -1,6 +1,5 @@
 package com.apayah.music.frontend.controllers;
 
-import java.io.IOException;
 import java.net.URL;
 import java.util.List;
 import java.util.Optional;
@@ -11,15 +10,12 @@ import com.apayah.music.backend.MusicPlayerFacade;
 import com.apayah.music.frontend.AppState;
 import com.apayah.music.frontend.SongData;
 
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.geometry.Insets;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceDialog;
 import javafx.scene.control.Label;
@@ -29,25 +25,24 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-import javafx.stage.Modality;
-import javafx.stage.Stage;
-import javafx.util.Callback;
 
 import com.apayah.music.playlist.Playlist;
 import com.apayah.music.playlist.PlaylistManager;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackInfo;
 
-import java.util.stream.Collectors;
-
 public class PlaylistFXMLController implements Initializable, AppState.MusicUpdateListener {
 
+    private static final String UNKNOWN_SONG = "Unknown Song";
+    
+    // Singleton instance - will be set when FXML instantiates this controller
+    private static PlaylistFXMLController instance;
+
     @FXML
-    private TableView<SongData> songTableView; // Menghubungkan dengan TableView di FXML
+    private TableView<SongData> songTableView;
     @FXML
-    private TableColumn<SongData, Void> actionColumn; // Add column for action buttons
+    private TableColumn<SongData, Void> actionColumn;
     @FXML
     private Button playButton;
     @FXML
@@ -79,9 +74,6 @@ public class PlaylistFXMLController implements Initializable, AppState.MusicUpda
     // Variable to store selected song for modal
     private SongData selectedSongForModal;
 
-    // Reference to parent controller for accessing control bar
-    private MainLayoutController parentController;
-
     // Detail panel fields for PlaylistFXML
     @FXML
     private ImageView playlistDetailAlbumCover;
@@ -98,13 +90,10 @@ public class PlaylistFXMLController implements Initializable, AppState.MusicUpda
     @FXML
     private StackPane playlistHeader;
 
-    // Singleton instance
-    private static PlaylistFXMLController instance;
-
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        instance = this;
-        System.out.println("PlaylistFXMLController initialized successfully");
+        // Capture this instance for singleton access
+        PlaylistFXMLController.instance = this;
 
         // Register as music update listener
         AppState.getInstance().addMusicUpdateListener(this);
@@ -112,21 +101,8 @@ public class PlaylistFXMLController implements Initializable, AppState.MusicUpda
         // Check if there is already music playing and update UI
         Music currentMusic = AppState.getInstance().getCurrentMusic();
         if (currentMusic != null) {
-            System.out.println("DEBUG PlaylistFXML: Found current music in AppState, updating UI");
             updatePlaylistDetailPanel(currentMusic);
         }
-
-        // Debug: Check FXML field bindings
-        System.out.println("DEBUG: FXML field check:");
-        System.out.println("  songTableView: " + songTableView);
-        System.out.println("  playlistDetailSongName: " + playlistDetailSongName);
-        System.out.println("  playlistDetailArtistName: " + playlistDetailArtistName);
-        System.out.println("  playlistDetailAlbumName: " + playlistDetailAlbumName);
-        System.out.println("  playlistDetailDuration: " + playlistDetailDuration);
-        System.out.println("  playlistDetailAlbumCover: " + playlistDetailAlbumCover);
-
-        // Initialize song table
-        // initializeSongTable();
 
         // Setup row factory for double-click playback
         if (songTableView != null) {
@@ -167,75 +143,41 @@ public class PlaylistFXMLController implements Initializable, AppState.MusicUpda
         return instance;
     }
 
-    private void initializeSongTable() {
-        var musicPlayerFacade = AppState.getInstance().getMusicPlayer();
-
-        musicPlayerFacade.search("so asu").thenAccept(musics -> {
-            ObservableList<SongData> songs = FXCollections.observableArrayList();
-
-            for (Music music : musics) {
-                var info = music.getTrack().getInfo();
-                songs.add(new SongData(0, info.title, info.author, "", formatDurationFromMillis(info.length),
-                        new Image(info.artworkUrl), music));
-            }
-
-            // Menetapkan ObservableList ke TableView
-            if (songTableView != null) {
-                songTableView.setItems(songs);
-
-                // Add row click listener untuk play lagu
-                songTableView.setRowFactory(tv -> {
-                    var row = new javafx.scene.control.TableRow<SongData>();
-                    row.setOnMouseClicked(event -> {
-                        if (event.getClickCount() == 2 && (!row.isEmpty())) {
-                            SongData rowData = row.getItem();
-                            playSelectedSong(rowData);
-                        }
-                    });
-                    return row;
-                });
-            }
-
-        });
-
-    }
-
     /**
      * Setup the action column with Add buttons for each row
      */
     private void setupActionColumn() {
         if (actionColumn != null) {
-            actionColumn.setCellFactory(
-                    new Callback<TableColumn<SongData, Void>, javafx.scene.control.TableCell<SongData, Void>>() {
-                        @Override
-                        public javafx.scene.control.TableCell<SongData, Void> call(
-                                final TableColumn<SongData, Void> param) {
-                            final javafx.scene.control.TableCell<SongData, Void> cell = new javafx.scene.control.TableCell<SongData, Void>() {
+            actionColumn.setCellFactory(param -> new ActionButtonTableCell());
+        }
+    }
 
-                                private final Button addBtn = new Button("Add");
+    /**
+     * Custom TableCell for displaying action buttons in the table
+     */
+    private class ActionButtonTableCell extends javafx.scene.control.TableCell<SongData, Void> {
+        private final Button addBtn;
 
-                                {
-                                    addBtn.getStyleClass().add("table-add-button");
-                                    addBtn.setOnAction((ActionEvent event) -> {
-                                        SongData song = getTableView().getItems().get(getIndex());
-                                        selectedSongForModal = song;
-                                        showAddToPlaylistModal(event);
-                                    });
-                                }
+        public ActionButtonTableCell() {
+            addBtn = new Button("Add");
+            addBtn.getStyleClass().add("table-add-button");
+            addBtn.setOnAction(this::handleAddButtonAction);
+        }
 
-                                @Override
-                                public void updateItem(Void item, boolean empty) {
-                                    super.updateItem(item, empty);
-                                    if (empty) {
-                                        setGraphic(null);
-                                    } else {
-                                        setGraphic(addBtn);
-                                    }
-                                }
-                            };
-                            return cell;
-                        }
-                    });
+        private void handleAddButtonAction(ActionEvent event) {
+            SongData song = getTableView().getItems().get(getIndex());
+            selectedSongForModal = song;
+            showAddToPlaylistModal(event);
+        }
+
+        @Override
+        public void updateItem(Void item, boolean empty) {
+            super.updateItem(item, empty);
+            if (empty) {
+                setGraphic(null);
+            } else {
+                setGraphic(addBtn);
+            }
         }
     }
 
@@ -246,11 +188,6 @@ public class PlaylistFXMLController implements Initializable, AppState.MusicUpda
     private void showAddToPlaylistModal(ActionEvent event) {
         List<String> playlistNames = PlaylistManager.getInstance().getSemuaPlaylist().stream()
                 .map(p -> p.getNama()).toList();
-
-        if (playlistNames.isEmpty()) {
-            showErrorMessage("No playlists available. Create a playlist first.");
-            return;
-        }
 
         ChoiceDialog<String> dialog = new ChoiceDialog<>(playlistNames.get(0), playlistNames);
         dialog.setTitle("Add to Playlist");
@@ -266,24 +203,13 @@ public class PlaylistFXMLController implements Initializable, AppState.MusicUpda
             } else {
                 SongData selectedSong = getSelectedSong();
                 if (selectedSong != null) {
-                    songName = selectedSong.getSongTitle() + " - " + selectedSong.getAlbum();
-                } else {
-                    songName = "Unknown Song";
+                    songName = UNKNOWN_SONG;
                 }
             }
-            System.out.println("Added '" + songName + "' to playlist: " + playlistName);
-            showSuccessMessage("'" + (selectedSongForModal != null ? selectedSongForModal.getSongTitle() : "Song") +
-                    "' added to " + playlistName + " successfully!");
             PlaylistManager.getInstance().tambahLaguKePlaylist(playlistName, songName,
                     selectedSongForModal.getMusic().getTrack().getInfo().uri);
             selectedSongForModal = null;
         });
-    }
-
-    @FXML
-    private void openPlaylistModal() throws IOException {
-        // This method is no longer used, but we keep it to avoid breaking other parts
-        // of the code for now.
     }
 
     /**
@@ -295,7 +221,6 @@ public class PlaylistFXMLController implements Initializable, AppState.MusicUpda
             modalOverlay.setVisible(false);
             modalOverlay.setManaged(false);
         }
-        System.out.println("Add to Playlist modal closed");
     }
 
     /**
@@ -304,69 +229,27 @@ public class PlaylistFXMLController implements Initializable, AppState.MusicUpda
     @FXML
     private void addToSelectedPlaylist(ActionEvent event) {
         if (playlistToggleGroup != null && playlistToggleGroup.getSelectedToggle() != null) {
-            RadioButton selectedRadio = (RadioButton) playlistToggleGroup.getSelectedToggle();
-            String selectedPlaylist = "";
+            getSelectedPlaylistName();
 
-            if (selectedRadio == playlist1Radio) {
-                selectedPlaylist = "BL8M";
-            } else if (selectedRadio == playlist2Radio) {
-                selectedPlaylist = "My Favorites";
-            } else if (selectedRadio == playlist3Radio) {
-                selectedPlaylist = "Chill Vibes";
-            }
-
-            // Get song name to add
-            String songName = "";
-            if (selectedSongForModal != null) {
-                songName = selectedSongForModal.getSongTitle() + " - " +
-                        selectedSongForModal.getAlbum();
-            } else {
-                // Fallback to selected table item
-                SongData selectedSong = getSelectedSong();
-                if (selectedSong != null) {
-                    songName = selectedSong.getSongTitle() + " - " + selectedSong.getAlbum();
-                } else {
-                    songName = "Unknown Song";
-                }
-            }
-
-            System.out.println("Added '" + songName + "' to playlist: " + selectedPlaylist);
-
-            // Hide modal after adding
             hideAddToPlaylistModal(event);
-
-            // Show success message
-            showSuccessMessage("'" + (selectedSongForModal != null ? selectedSongForModal.getSongTitle() : "Song") +
-                    "' added to " + selectedPlaylist + " successfully!");
-
-            // Clear the selected song
-            selectedSongForModal = null;
-
-        } else {
-            System.out.println("No playlist selected");
-            showErrorMessage("Please select a playlist first!");
         }
     }
 
     /**
-     * Show success message (placeholder for actual implementation)
+     * Helper method to get selected playlist name
      */
-    private void showSuccessMessage(String message) {
-        System.out.println("SUCCESS: " + message);
-        // Here you could show a toast notification or update UI
+    private String getSelectedPlaylistName() {
+        RadioButton selectedRadio = (RadioButton) playlistToggleGroup.getSelectedToggle();
+        if (selectedRadio == playlist1Radio) {
+            return "BL8M";
+        } else if (selectedRadio == playlist2Radio) {
+            return "My Favorites";
+        } else if (selectedRadio == playlist3Radio) {
+            return "Chill Vibes";
+        }
+        return "";
     }
 
-    /**
-     * Show error message (placeholder for actual implementation)
-     */
-    private void showErrorMessage(String message) {
-        System.out.println("ERROR: " + message);
-        // Here you could show an error dialog or notification
-    }
-
-    /**
-     * Get the currently selected song from table
-     */
     private SongData getSelectedSong() {
         if (songTableView != null) {
             return songTableView.getSelectionModel().getSelectedItem();
@@ -382,12 +265,10 @@ public class PlaylistFXMLController implements Initializable, AppState.MusicUpda
     }
 
     /**
+     * /**
      * Set parent controller reference to access control bar
      */
-    public void setParentController(MainLayoutController parentController) {
-        this.parentController = parentController;
-    }
-
+    // Removed unused setParentController method
     @FXML
     public void onPlayPlaylistButtonClick() {
         var musicPlayerFacade = AppState.getInstance().getMusicPlayer();
@@ -401,7 +282,7 @@ public class PlaylistFXMLController implements Initializable, AppState.MusicUpda
         }
         musicPlayerFacade.jump(0);
         musicPlayerFacade.resume();
-        
+
     }
 
     /**
@@ -409,7 +290,6 @@ public class PlaylistFXMLController implements Initializable, AppState.MusicUpda
      */
     private void playSelectedSong(SongData songData) {
         if (songData == null || songData.getMusic() == null) {
-            System.out.println("No song data or music object available");
             return;
         }
 
@@ -421,13 +301,7 @@ public class PlaylistFXMLController implements Initializable, AppState.MusicUpda
             boolean isSearchMode = (playlistHeader != null && !playlistHeader.isVisible());
 
             if (isSearchMode) {
-                // In search mode, we want to replace the current queue with the search results
-                // so the user can play through the search results like a playlist
-
-                // 1. Clear current queue
                 musicPlayerFacade.clearQueue();
-
-                // 2. Add all songs from the table to the queue
                 ObservableList<SongData> allSongs = songTableView.getItems();
                 for (SongData song : allSongs) {
                     if (song.getMusic() != null) {
@@ -435,23 +309,12 @@ public class PlaylistFXMLController implements Initializable, AppState.MusicUpda
                     }
                 }
 
-                // 3. Jump to the selected song (using its index in the table)
-                // Note: Table index is 0-based, jump expects 0-based index
                 int indexToJump = songTableView.getItems().indexOf(songData);
                 musicPlayerFacade.jump(indexToJump);
 
             } else {
-                // Normal playlist behavior (existing logic)
-                // Just add to end and play? Or jump if already in queue?
-                // For now, let's keep the existing logic of adding to end and jumping
-
-                // Calculate index for the new song (current size of queue)
                 int indexToJump = musicPlayerFacade.playingQueue().size();
-
-                // Add song to queue
                 musicPlayerFacade.addToQueue(songData.getMusic());
-
-                // Jump to the new song
                 musicPlayerFacade.jump(indexToJump);
             }
 
@@ -469,10 +332,7 @@ public class PlaylistFXMLController implements Initializable, AppState.MusicUpda
             // Update UI immediately
             updatePlaylistDetailPanel(songData.getMusic());
 
-            System.out.println("Playing song: " + songData.getSongTitle());
-
         } catch (Exception e) {
-            System.err.println("Error playing song: " + e.getMessage());
             e.printStackTrace();
         }
     }
@@ -482,13 +342,11 @@ public class PlaylistFXMLController implements Initializable, AppState.MusicUpda
      */
     private void updateControlBar(com.sedmelluq.discord.lavaplayer.track.AudioTrackInfo info) {
         try {
-            System.out.println("DEBUG: Updating control bar for song: " + info.title);
             double durationInSeconds = info.length / 1000.0;
 
             // Method 1: Via AppLayoutController (primary approach)
             AppLayoutController appController = AppLayoutController.getInstance();
             if (appController != null) {
-                System.out.println("DEBUG: Using AppLayoutController to update music control");
                 appController.updateMusicControl(info.title, info.author, "", durationInSeconds);
                 return;
             }
@@ -496,49 +354,10 @@ public class PlaylistFXMLController implements Initializable, AppState.MusicUpda
             // Method 2: Direct singleton fallback
             ControlFXMLController controlController = ControlFXMLController.getInstance();
             if (controlController != null) {
-                System.out.println("DEBUG: Using direct singleton to update music control");
                 controlController.updateSongInfo(info.title, info.author, "", durationInSeconds);
                 controlController.startPlayback();
-                return;
-            }
-
-            System.out.println("ERROR: Could not find any controller instance to update music control");
-        } catch (Exception e) {
-            System.out.println("Error updating control bar: " + e.getMessage());
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * Update detail panel with song information
-     */
-    private void updateDetailPanel(Music music) {
-        try {
-            System.out.println("DEBUG: Updating detail panel for music");
-
-            // Update local detail panel in PlaylistFXML
-            updatePlaylistDetailPanel(music);
-
-            // Also try to update PlaylistFXMLController instance if we're not in playlist
-            // page
-            var playlistController = PlaylistFXMLController.getInstance();
-            if (playlistController != null && playlistController != this) {
-                System.out.println("DEBUG: Updating external PlaylistFXMLController instance");
-                playlistController.updatePlaylistDetailPanelExternal(music);
-            }
-
-            // Also try to update FXMLDocumentController if available
-            var detailController = FXMLDocumentController.getInstance();
-            System.out.println("DEBUG: FXMLDocumentController instance: " + detailController);
-
-            if (detailController != null) {
-                detailController.updateMusicDetails(music);
-                System.out.println("DEBUG: FXMLDocument detail panel update completed");
-            } else {
-                System.out.println("INFO: FXMLDocumentController not available (normal for PlaylistFXML)");
             }
         } catch (Exception e) {
-            System.out.println("Error updating detail panel: " + e.getMessage());
             e.printStackTrace();
         }
     }
@@ -547,7 +366,6 @@ public class PlaylistFXMLController implements Initializable, AppState.MusicUpda
      * External method to update playlist detail panel from other controllers
      */
     public void updatePlaylistDetailPanelExternal(Music music) {
-        System.out.println("DEBUG: External call to update playlist detail panel");
         updatePlaylistDetailPanel(music);
     }
 
@@ -560,54 +378,47 @@ public class PlaylistFXMLController implements Initializable, AppState.MusicUpda
         }
 
         var info = music.getTrack().getInfo();
-        System.out.println("DEBUG: Updating playlist detail panel with: " + info.title);
 
-        // Update song name - try alternative lookup if field is null
         if (playlistDetailSongName != null) {
-            playlistDetailSongName.setText(info.title != null ? info.title : "Unknown Song");
-            System.out.println("DEBUG: Updated playlistDetailSongName to: " + playlistDetailSongName.getText());
+            playlistDetailSongName.setText(info.title != null ? info.title : UNKNOWN_SONG);
+            updateDetailPanelFields(info);
         } else {
-            System.out.println("ERROR: playlistDetailSongName is null - trying alternative lookup");
             tryPlaylistAlternativeUIUpdate(info.title, info.author, info.length);
-            return;
         }
+    }
 
-        // Update artist name
+    /**
+     * Update individual detail panel fields
+     */
+    private void updateDetailPanelFields(AudioTrackInfo info) {
         if (playlistDetailArtistName != null) {
             playlistDetailArtistName.setText(info.author != null ? info.author : "Unknown Artist");
-            System.out.println("DEBUG: Updated playlistDetailArtistName to: " + playlistDetailArtistName.getText());
-        } else {
-            System.out.println("ERROR: playlistDetailArtistName is null");
         }
 
-        // Update album name (might not be available)
         if (playlistDetailAlbumName != null) {
-            playlistDetailAlbumName.setText("Unknown Album"); // Track info usually doesn't have album
+            playlistDetailAlbumName.setText("Unknown Album");
         }
 
-        // Update duration
         if (playlistDetailDuration != null) {
             String duration = formatDurationFromMillis(info.length);
             playlistDetailDuration.setText("Duration: " + duration);
-            System.out.println("DEBUG: Updated playlistDetailDuration to: " + playlistDetailDuration.getText());
-        } else {
-            System.out.println("ERROR: playlistDetailDuration is null");
         }
 
-        // Update album cover
+        updateAlbumCover(info);
+    }
+
+    /**
+     * Update album cover image
+     */
+    private void updateAlbumCover(AudioTrackInfo info) {
         if (playlistDetailAlbumCover != null && info.artworkUrl != null && !info.artworkUrl.isEmpty()) {
             try {
                 Image albumImage = new Image(info.artworkUrl);
                 playlistDetailAlbumCover.setImage(albumImage);
-                System.out.println("DEBUG: Updated playlistDetailAlbumCover with: " + info.artworkUrl);
             } catch (Exception e) {
-                System.out.println("Could not load album cover: " + info.artworkUrl);
+                // Image loading failed, continue without cover
             }
-        } else {
-            System.out.println("DEBUG: playlistDetailAlbumCover is null or no artwork URL");
         }
-
-        System.out.println("DEBUG: Playlist detail panel update completed");
     }
 
     /**
@@ -624,81 +435,75 @@ public class PlaylistFXMLController implements Initializable, AppState.MusicUpda
      * Alternative method to update UI using scene lookup when FXML binding fails
      */
     private void tryPlaylistAlternativeUIUpdate(String songTitle, String artist, long durationMs) {
-        // Use Platform.runLater to ensure UI thread access
         javafx.application.Platform.runLater(() -> {
             try {
-                System.out.println("DEBUG Playlist: Attempting alternative UI update using scene lookup");
-
-                // Multiple strategies to find the scene
-                javafx.scene.Scene scene = null;
-
-                if (songTableView != null && songTableView.getScene() != null) {
-                    scene = songTableView.getScene();
-                    System.out.println("DEBUG Playlist: Got scene from songTableView");
-                } else if (playButton != null && playButton.getScene() != null) {
-                    scene = playButton.getScene();
-                    System.out.println("DEBUG Playlist: Got scene from playButton");
-                }
-
+                javafx.scene.Scene scene = findScene();
                 if (scene != null) {
-                    // Try to find elements by ID in the scene
-                    javafx.scene.control.Label songNameLabel = (javafx.scene.control.Label) scene
-                            .lookup("#playlistDetailSongName");
-                    javafx.scene.control.Label artistNameLabel = (javafx.scene.control.Label) scene
-                            .lookup("#playlistDetailArtistName");
-                    javafx.scene.control.Label durationLabel = (javafx.scene.control.Label) scene
-                            .lookup("#playlistDetailDuration");
-                    javafx.scene.image.ImageView albumCoverView = (javafx.scene.image.ImageView) scene
-                            .lookup("#playlistDetailAlbumCover");
-
-                    if (songNameLabel != null) {
-                        songNameLabel.setText(songTitle != null ? songTitle : "Unknown Song");
-                        System.out.println("DEBUG Playlist: Alternative update - Updated song name via lookup to: "
-                                + songNameLabel.getText());
-                    } else {
-                        System.out.println("ERROR Playlist: Could not find playlistDetailSongName via lookup");
-                    }
-
-                    if (artistNameLabel != null) {
-                        artistNameLabel.setText(artist != null ? artist : "Unknown Artist");
-                        System.out.println("DEBUG Playlist: Alternative update - Updated artist name via lookup to: "
-                                + artistNameLabel.getText());
-                    } else {
-                        System.out.println("ERROR Playlist: Could not find playlistDetailArtistName via lookup");
-                    }
-
-                    if (durationLabel != null) {
-                        String formattedDuration = formatDurationFromMillis(durationMs);
-                        durationLabel.setText("Duration: " + formattedDuration);
-                        System.out.println("DEBUG Playlist: Alternative update - Updated duration via lookup to: "
-                                + durationLabel.getText());
-                    } else {
-                        System.out.println("ERROR Playlist: Could not find playlistDetailDuration via lookup");
-                    }
-
-                    if (albumCoverView != null) {
-                        // We can't easily set the image here without the URL, but at least we checked
-                        // it exists
-                        System.out.println("DEBUG Playlist: Found albumCoverView via lookup");
-                    }
-
-                } else {
-                    System.out.println("ERROR Playlist: Cannot perform scene lookup - no scene available");
+                    updateUIElementsFromScene(scene, songTitle, artist, durationMs);
                 }
-
             } catch (Exception e) {
-                System.out.println("ERROR Playlist: Alternative UI update failed: " + e.getMessage());
                 e.printStackTrace();
             }
         });
     }
 
+    /**
+     * Find the scene from available UI components
+     */
+    private javafx.scene.Scene findScene() {
+        if (songTableView != null && songTableView.getScene() != null) {
+            return songTableView.getScene();
+        }
+        if (playButton != null && playButton.getScene() != null) {
+            return playButton.getScene();
+        }
+        return null;
+    }
+
+    /**
+     * Update UI elements found in the scene
+     */
+    private void updateUIElementsFromScene(javafx.scene.Scene scene, String songTitle, String artist, long durationMs) {
+        updateSongNameLabel(scene, songTitle);
+        updateArtistNameLabel(scene, artist);
+        updateDurationLabel(scene, durationMs);
+    }
+
+    /**
+     * Update song name label
+     */
+    private void updateSongNameLabel(javafx.scene.Scene scene, String songTitle) {
+        javafx.scene.control.Label songNameLabel = (javafx.scene.control.Label) scene.lookup("#playlistDetailSongName");
+        if (songNameLabel != null) {
+            songNameLabel.setText(songTitle != null ? songTitle : UNKNOWN_SONG);
+        }
+    }
+
+    /**
+     * Update artist name label
+     */
+    private void updateArtistNameLabel(javafx.scene.Scene scene, String artist) {
+        javafx.scene.control.Label artistNameLabel = (javafx.scene.control.Label) scene
+                .lookup("#playlistDetailArtistName");
+        if (artistNameLabel != null) {
+            artistNameLabel.setText(artist != null ? artist : "Unknown Artist");
+        }
+    }
+
+    /**
+     * Update duration label
+     */
+    private void updateDurationLabel(javafx.scene.Scene scene, long durationMs) {
+        javafx.scene.control.Label durationLabel = (javafx.scene.control.Label) scene.lookup("#playlistDetailDuration");
+        if (durationLabel != null) {
+            String formattedDuration = formatDurationFromMillis(durationMs);
+            durationLabel.setText("Duration: " + formattedDuration);
+        }
+    }
+
     @Override
     public void onMusicChanged(Music music) {
-        System.out.println("DEBUG Playlist: Received music update event");
-        javafx.application.Platform.runLater(() -> {
-            updatePlaylistDetailPanel(music);
-        });
+        Platform.runLater(() -> updatePlaylistDetailPanel(music));
     }
 
     /**
@@ -710,52 +515,50 @@ public class PlaylistFXMLController implements Initializable, AppState.MusicUpda
             playlistHeader.setManaged(false);
         }
 
-        System.out.println("Performing search for: " + query);
+        AppState.getInstance().getMusicPlayer().search(query).thenAccept(musics -> Platform.runLater(() -> {
+            ObservableList<SongData> searchResults = FXCollections.observableArrayList();
+            int index = 1;
+            for (Music music : musics) {
+                searchResults.add(new SongData(
+                        index++,
+                        music.getTrack().getInfo().title,
+                        music.getTrack().getInfo().author,
+                        "-",
+                        formatDurationFromMillis(music.getTrack().getDuration()),
+                        null,
+                        music));
+            }
+            songTableView.setItems(searchResults);
+        }));
 
-        AppState.getInstance().getMusicPlayer().search(query).thenAccept(musics -> {
-            javafx.application.Platform.runLater(() -> {
-                ObservableList<SongData> searchResults = FXCollections.observableArrayList();
-                int index = 1;
-                for (Music music : musics) {
-                    searchResults.add(new SongData(
-                            index++,
-                            music.getTrack().getInfo().title,
-                            music.getTrack().getInfo().author,
-                            "-", // Album
-                            formatDurationFromMillis(music.getTrack().getDuration()),
-                            null, // Image
-                            music));
-                }
-                songTableView.setItems(searchResults);
-            });
-        });
     }
 
     public void loadFromPlaylist(Playlist playlist) {
-        System.err.println(playlist.getNama());
         MusicPlayerFacade musicPlayer = AppState.getInstance().getMusicPlayer();
         List<String> links = playlist.getDaftarLinkLagu();
         ObservableList<SongData> searchResults = FXCollections.observableArrayList();
         for (int i = 0; i < links.size(); i++) {
             int index = i;
-            System.err.println("Searching " + links.get(index));
 
-            musicPlayer.search(links.get(index)).thenAccept(musics -> {
-                System.err.println("Loaded " + musics.size());
-                javafx.application.Platform.runLater(() -> {
-                    if (musics.size() > 0) {
-                        Music m = musics.get(0);
-                        AudioTrackInfo info = m.getTrack().getInfo();
-                        searchResults.add(new SongData(
-                                index,
-                                info.title,
-                                info.author,
-                                "-",
-                                formatDurationFromMillis(m.getTrack().getDuration()), new Image(info.artworkUrl), m));
+            musicPlayer.search(links.get(index)).thenAccept(musics -> Platform.runLater(() -> {
+                if (!musics.isEmpty()) {
+                    Music m = musics.get(0);
+                    AudioTrackInfo info = m.getTrack().getInfo();
+
+                    searchResults.add(new SongData(
+                            index,
+                            info.title,
+                            info.author,
+                            "-",
+                            formatDurationFromMillis(m.getTrack().getDuration()),
+                            new Image(info.artworkUrl),
+                            m));
+
+                    if (songTableView != null) {
                         songTableView.setItems(searchResults);
                     }
-                });
-            });
+                }
+            }));
 
         }
     }

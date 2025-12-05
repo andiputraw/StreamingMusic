@@ -15,7 +15,7 @@ public class Speaker {
 
     private static final Logger log = LoggerFactory.getLogger(Speaker.class);
 
-    private volatile boolean running = true;   // <-- Add condition flag
+    private volatile boolean running = true; // <-- Add condition flag
     private Thread pumpThread;
 
     public Speaker(AudioPlayer player, AudioDataFormat format) throws LineUnavailableException {
@@ -26,8 +26,7 @@ public class Speaker {
                 16,
                 format.channelCount,
                 true,
-                true
-        );
+                true);
 
         DataLine.Info info = new DataLine.Info(SourceDataLine.class, javaFormat);
         this.line = (SourceDataLine) AudioSystem.getLine(info);
@@ -43,7 +42,7 @@ public class Speaker {
 
     private void pumpAudio() {
         try {
-            while (running) {               // <-- Loop ends when running = false
+            while (running) { // <-- Loop ends when running = false
                 AudioFrame frame = player.provide();
 
                 if (frame != null) {
@@ -66,9 +65,9 @@ public class Speaker {
      * Gracefully stops the speaker thread.
      */
     public void stop() {
-        running = false;       // Signal thread to stop
+        running = false; // Signal thread to stop
         if (pumpThread != null) {
-            pumpThread.interrupt();  // Wake it if it's sleeping
+            pumpThread.interrupt(); // Wake it if it's sleeping
         }
     }
 }
