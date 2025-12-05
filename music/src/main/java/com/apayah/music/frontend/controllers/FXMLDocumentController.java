@@ -7,6 +7,10 @@ import com.apayah.music.playlist.PlaylistManager;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import javafx.collections.ListChangeListener;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -32,6 +36,7 @@ public class FXMLDocumentController implements Initializable, AppState.MusicUpda
     @FXML
     private Label label;
 
+        private static final Logger log = LoggerFactory.getLogger(FXMLDocumentController.class);
     @FXML
     private Button sliderButton;
 
@@ -72,15 +77,18 @@ public class FXMLDocumentController implements Initializable, AppState.MusicUpda
     private EventHandler<? super MouseEvent> onPlaylistItemClicked(Playlist playlist) {
         return (MouseEvent event) -> {
             try {
+                log.info("Loading {}", playlist.getNama());
                 // Use AppLayout to switch to playlist content
                 AppLayoutController appController = AppLayoutController.getInstance();
                 AppState.getInstance().setSelectedPlaylist(playlist);
                 if (appController != null) {
                     appController.switchToContent("PlaylistFXML.fxml");
-                    PlaylistFXMLController cntrl = PlaylistFXMLController.getInstance();
-                    cntrl.loadFromPlaylist(playlist);
-                    cntrl.setPlaylistTitle(playlist.getNama());
-
+                    // Get the controller from the cache, not the broken singleton
+                    PlaylistFXMLController cntrl = appController.getController("/fxml/PlaylistFXML.fxml");
+                    if (cntrl != null) {
+                        cntrl.loadFromPlaylist(playlist);
+                        cntrl.setPlaylistTitle(playlist.getNama());
+                    }
                 }
 
             } catch (Exception e) {

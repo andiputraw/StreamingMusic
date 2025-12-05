@@ -5,8 +5,13 @@ import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+
 import com.apayah.music.backend.Music;
 import com.apayah.music.backend.MusicPlayerFacade;
+import com.apayah.music.backend.MusicQueueScheduler;
 import com.apayah.music.frontend.AppState;
 import com.apayah.music.frontend.SongData;
 
@@ -35,6 +40,8 @@ import com.sedmelluq.discord.lavaplayer.track.AudioTrackInfo;
 public class PlaylistFXMLController implements Initializable, AppState.MusicUpdateListener {
 
     private static final String UNKNOWN_SONG = "Unknown Song";
+   private static final Logger log = LoggerFactory.getLogger(PlaylistFXMLController.class);
+
 
     // Singleton instance - will be set when FXML instantiates this controller
     private static PlaylistFXMLController instance;
@@ -538,6 +545,7 @@ public class PlaylistFXMLController implements Initializable, AppState.MusicUpda
     }
 
     public void loadFromPlaylist(Playlist playlist) {
+        log.info("Loading {} Playlist", playlist.getNama());
         MusicPlayerFacade musicPlayer = AppState.getInstance().getMusicPlayer();
         List<String> links = playlist.getDaftarLinkLagu();
         ObservableList<SongData> searchResults = FXCollections.observableArrayList();
@@ -568,6 +576,7 @@ public class PlaylistFXMLController implements Initializable, AppState.MusicUpda
     }
 
     public void setPlaylistTitle(String title) {
+        log.info("Setting title into {}", title);
         this.playlistTitle.setText(title);
     }
 }

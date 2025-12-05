@@ -2,6 +2,8 @@ package com.apayah.music.frontend.controllers;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.ResourceBundle;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -22,6 +24,10 @@ public class AppLayoutController implements Initializable {
 
     // Reference to music control controller for easy access
     private ControlFXMLController musicControlController;
+
+    // Caches for loaded FXML content and controllers
+    private final Map<String, Node> contentCache = new HashMap<>();
+    private final Map<String, Object> controllerCache = new HashMap<>();
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -60,7 +66,6 @@ public class AppLayoutController implements Initializable {
         loadContent("/fxml/FXMLDocument.fxml");
     }
 
-
     /**
      * Load playlist content (PlaylistFXML)
      */
@@ -75,18 +80,34 @@ public class AppLayoutController implements Initializable {
         if (contentArea == null) {
             return; // contentArea not yet initialized
         }
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/PlaylistFXML.fxml"));
-            Node content = loader.load();
+        // Ensure playlist view is loaded
+        loadContent("/fxml/PlaylistFXML.fxml");
+        
+        // Get controller from cache and perform search
+        PlaylistFXMLController controller = getController("/fxml/PlaylistFXML.fxml");
+        if (controller != null) {
+            controller.performSearch(query);
+        }
+    }
 
-            PlaylistFXMLController controller = loader.getController();
-            if (controller != null) {
-                controller.performSearch(query);
+    /**
+     * Generic method to load any FXML content, using a cache to avoid reloading.
+     */
+    private void loadContent(String fxmlPath) {
+        if (contentArea == null) {
+            return; // contentArea not yet initialized
+        }
+        try {
+            Node contentNode = contentCache.get(fxmlPath);
+            if (contentNode == null) {
+                FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
+                contentNode = loader.load();
+                contentCache.put(fxmlPath, contentNode);
+                controllerCache.put(fxmlPath, loader.getController());
             }
 
-            // Clear current content and add new content
-            contentArea.getChildren().clear();
-            contentArea.getChildren().add(content);
+            // Set the content
+            contentArea.getChildren().setAll(contentNode);
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -94,23 +115,14 @@ public class AppLayoutController implements Initializable {
     }
 
     /**
-     * Generic method to load any FXML content
+     * Gets the controller for a cached FXML file.
+     * @param <T> The type of the controller.
+     * @param fxmlPath The path to the FXML file.
+     * @return The controller instance, or null if not found.
      */
-    private void loadContent(String fxmlPath) {
-        if (contentArea == null) {
-            return; // contentArea not yet initialized
-        }
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
-            Node content = loader.load();
-
-            // Clear current content and add new content
-            contentArea.getChildren().clear();
-            contentArea.getChildren().add(content);
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    @SuppressWarnings("unchecked")
+    public <T> T getController(String fxmlPath) {
+        return (T) controllerCache.get(fxmlPath);
     }
 
     /**
